@@ -31,7 +31,7 @@ def kit_generator():
     gun = requester(gun_query, "Weapon")
     # print(f"Weapon: {gun}")
     
-    yes_no = ["No", "No"]
+    yes_no = ["Yes", "No"]
     customized_weapon = random.choice(yes_no)
     # print(f"Customized Weapon: {customized_weapon}")
 
@@ -39,6 +39,7 @@ def kit_generator():
     grenades = requester(grenade_query, "Grenades")
     # print(f"Grenades: {grenades}")
 
+    print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
     return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
 
 
