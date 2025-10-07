@@ -1,7 +1,7 @@
 import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
-import requests
+from dash import html
 import tarkov_api as api
 
 # Initialize app
@@ -9,38 +9,37 @@ app = dash.Dash(__name__)
 server = app.server  # If you want to deploy later
 
 # Layout
-app.layout = html.Div([
-    html.H1("Tarkov Loadout Generator", className="title", id="title"),
-    
-    html.Div([
-        dcc.Input(id="api-input", type="text", placeholder="Enter query..."),
-        html.Button("Submit", id="submit-btn"),
-    ], className="input-row"),
-    
-    html.Div(id="box-container", className="box-container")
-])
+app.layout = html.Div(
+    [
+        html.Div(
+            [
+                html.H1("Tarkov Loadout Generator", className="title", id="title"),
+                html.Div([html.Button("Submit", id="submit-btn")], className="input-row"),
+                html.Div(id="box-container", className="box-container") 
+            ], className="my-div-style"
+        )
+    ]
+)
 
 
-
-# Callback to fetch API and populate boxes
 @app.callback(
     Output("box-container", "children"),
     Input("submit-btn", "n_clicks"),
-    State("api-input", "value")
 )
-def update_boxes(n_clicks, query):
-    if not n_clicks or not query:
-        return [html.Div("Waiting...", className="box") for _ in range(10)]
+def update_boxes(n_clicks):
+    if not n_clicks:
+        return [html.Div("", className="box")]
 
     try:
-        request = new_query(result)
-        print(request)
-        
-        # Mock data for demo
-        data = [f"Item {i+1} for {request}" for i in range(10)]
-        
-        # Fill 10 boxes with API response (truncate or pad)
-        return [html.Div(data[i], className="box") for i in range(10)]
+        request = api.kit_generator()
+        data = [
+            html.Div([
+                html.P(item[0]),  # Item name
+                html.Img(src=item[1], style={'ali':'50px', 'margin-left':'10px'})  # Item icon
+            ], className="box")
+            for item in request
+        ]
+        return data
     
     except Exception as e:
         return [html.Div(f"Error: {e}", className="box") for _ in range(10)]

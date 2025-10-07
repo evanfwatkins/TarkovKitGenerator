@@ -9,37 +9,37 @@ def kit_generator():
     
     helmet_query = """query Helmets {items(name: "Helmet", types: helmet) {name iconLink}}"""
     helmet = requester(helmet_query, "Helmet")
-    print(f"Helmet: {helmet}")
+    # print(f"Helmet: {helmet}")
     
-    # masks_query = """query Items {items(name: "Mask", types: wearable) {name iconLink}}"""
-    # mask = requester(masks_query, "Mask")
+    masks_query = """query Items {items(name: "Mask", types: wearable) {name iconLink}}"""
+    mask = requester(masks_query, "Mask")
     # print(f"Mask: {mask}")
 
-    # headset_query = """query Items {items(name: "Headset", types: wearable) {name iconLink}}"""
-    # headset = requester(headset_query, "Headset")
+    headset_query = """query Items {items(name: "Headset", types: wearable) {name iconLink}}"""
+    headset = requester(headset_query, "Headset")
     # print(f"Headset: {headset}")
     
-    # armor_query = """query Armor {items(name: "Armor", types: armor) {name iconLink}}"""
-    # armor = requester(armor_query, "Armor")
+    armor_query = """query Armor {items(name: "Armor", types: armor) {name iconLink}}"""
+    armor = requester(armor_query, "Armor")
     # print(f"Armor: {armor}")
 
-    # backpack_query = """query Gear {items(name: "Backpack") {name iconLink}}"""
-    # backpack = requester(backpack_query, "Backpack")
+    backpack_query = """query Gear {items(name: "Backpack") {name iconLink}}"""
+    backpack = requester(backpack_query, "Backpack")
     # print(f"Backpack: {backpack}")
     
-    # gun_query = """query Weapon {items(types: gun) {name iconLink}}"""
-    # gun = requester(gun_query, "Weapon")
+    gun_query = """query Weapon {items(types: gun) {name iconLink}}"""
+    gun = requester(gun_query, "Weapon")
     # print(f"Weapon: {gun}")
     
-    # yes_no = ["No", "No"]
-    # customized_weapon = random.choice(yes_no)
+    yes_no = ["No", "No"]
+    customized_weapon = random.choice(yes_no)
     # print(f"Customized Weapon: {customized_weapon}")
 
-    # grenade_query = """query Weapon {items(types: grenade) {name iconLink}}"""
-    # grenades = requester(grenade_query, "Grenades")
+    grenade_query = """query Weapon {items(types: grenade) {name iconLink}}"""
+    grenades = requester(grenade_query, "Grenades")
     # print(f"Grenades: {grenades}")
 
-    
+    return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
 
 
 def requester(query, type):
@@ -56,5 +56,5 @@ def requester(query, type):
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
 
-if __name__ == "__main__":
-    kit_generator()
+# if __name__ == "__main__":
+#     kit_generator()
