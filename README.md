@@ -1,7 +1,9 @@
-Tarkov API https://github.com/the-hideout/tarkov-api
+Uses Tarkov API https://github.com/the-hideout/tarkov-api
+To start the application run 'python app.py' in the terminal
 
 TO DO: 
-    get app.py to call the kit_builder function
-    Resolve the UI in DASH to have only one input but 6 outputs and a text output
-    parse the response into something visual
-    display the icon in the output of each gear slot
+    #1 resolve issue with Yes or No returning Y or N 
+    #2 resolve issue with empty picture on Y or N
+        - the tuple is grabbing the first letter, and checking for an image in the tuple
+    #3 Rework the weapons to only be guns or knives
+    #4 Clean up the CSS

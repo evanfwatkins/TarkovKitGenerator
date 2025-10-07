@@ -39,7 +39,7 @@ def kit_generator():
     grenades = requester(grenade_query, "Grenades")
     # print(f"Grenades: {grenades}")
 
-    print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
+    # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
     return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
 
 

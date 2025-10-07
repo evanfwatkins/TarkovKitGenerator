@@ -9,26 +9,24 @@ app = dash.Dash(__name__)
 server = app.server  # If you want to deploy later
 
 # Layout
-app.layout = html.Div(
-    [
-        html.Div(
-            [
-                html.H1("Tarkov Loadout Generator", className="title", id="title"),
-                html.Div([html.Button("Submit", id="submit-btn")], className="input-row"),
-                html.Div(id="box-container", className="box-container") 
-            ], className="my-div-style"
-        )
-    ]
-)
-
+app.layout = html.Div([
+    html.Div(
+        [
+            html.H1("Tarkov Loadout Generator", className="title", id="title"),
+            html.Div([html.Button("Submit", id="btn")]),
+            html.Div(id="box-container", className="box-container") 
+        ], 
+        className="my-div-style"
+    )
+])
 
 @app.callback(
     Output("box-container", "children"),
-    Input("submit-btn", "n_clicks"),
+    Input("btn", "n_clicks"),
 )
 def update_boxes(n_clicks):
     if not n_clicks:
-        return [html.Div("", className="box")]
+        return [html.Div("", className="empty")]
 
     try:
         request = api.kit_generator()
