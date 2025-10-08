@@ -6,9 +6,9 @@ TarkovKitGenerator
 To start the application run 'app.py'
 
 
-To Do: 
-    1 Optimize graphql queries from Tarkov API. 
-        * Seeing some arena items
-        * Some weapons are just the lower reciever
-    2 resolve "Empty" boxs spacing and url whitespace
-    3 Add knives to the Weapons list
+## Upcoming Changes
+1. Optimize GraphQL queries from Tarkov API.  
+    1. Seeing some arena items  
+    2. Some weapons are just the lower receiver  
+2. Resolve "Empty" box spacing and URL whitespace  
+3. Add knives to the Weapons list
