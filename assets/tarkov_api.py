@@ -1,6 +1,6 @@
 import requests
 from pprint import pprint 
-import tarkov_api as api
+import assets.tarkov_api as api
 import random
 
 def kit_generator():

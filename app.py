@@ -2,7 +2,7 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dash import html
-import tarkov_api as api
+import assets.tarkov_api as api
 
 # Initialize app
 app = dash.Dash(__name__)
