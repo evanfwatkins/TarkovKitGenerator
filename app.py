@@ -32,8 +32,8 @@ def update_boxes(n_clicks):
         request = api.kit_generator()
         data = [
             html.Div([
-                html.P(item[0],className="name"), 
-                html.Img(src=item[1], style={'ali':'50px', 'margin-left':'10px'})  # Item icon
+                html.Div(item[0],className="name"), 
+                html.Div([html.Img(src=item[1], className="img")], className="divImg")
             ], className="box") 
             for item in request 
         ]
