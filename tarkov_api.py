@@ -40,6 +40,7 @@ def kit_generator():
     # print(f"Grenades: {grenades}")
 
     # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
+    # print(f"customized_weapon: {customized_weapon}")
     return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
 
 
@@ -49,11 +50,12 @@ def requester(query, type):
     if data.status_code == 200:
         response = data.json()
         list_of_items = [(item['name'], item['iconLink']) for item in response['data']['items']]
-        string_with_empty = "empty"
+        string_with_empty = ("empty", "")
         list_of_items.append(string_with_empty)
         # print(list_of_items)
         random_string = random.choice(list_of_items)
-        return random_string
+        # print(random_string, type)
+        return random_string, type
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
 
