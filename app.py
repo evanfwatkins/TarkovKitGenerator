@@ -1,7 +1,6 @@
 import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
-from dash import html
 import assets.tarkov_api as api
 
 # Initialize app
