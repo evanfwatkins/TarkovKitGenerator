@@ -9,58 +9,86 @@ def kit_generator():
     blocking = False
 
     helmet_query = """query Helmets {items(name: "Helmet") {name iconLink blocksHeadphones}}"""
-    helmet = requester(helmet_query, "Helmet", blocking)
-    # print(f"Helmet: {helmet}")
+    helmet = requester(helmet_query, 'Helmet')
+    print(f"Helmet: {helmet}")
+    if helmet[1] == True:
+        armor_query = """query Armor {items(name: "Armor", types: armor) {name iconLink}}"""
+        armor = requester(armor_query, "Armor")
+        # print(f"Armor: {armor}")
+
+        backpack_query = """query Gear {items(name: "Backpack") {name iconLink}}"""
+        backpack = requester(backpack_query, "Backpack")
+        # print(f"Backpack: {backpack}")
+        
+        gun_query = """query Weapon {items(types: gun) {name iconLink}}"""
+        gun = requester(gun_query, "Weapon")
+        # print(f"Weapon: {gun}")
+        
+        yes_no = ["Yes", "No"]
+        customized_weapon = random.choice(yes_no)
+        # print(f"Customized Weapon: {customized_weapon}")
+
+        grenade_query = """query Weapon {items(types: grenade) {name iconLink}}"""
+        grenades = requester(grenade_query, "Grenades")
+        # print(f"Grenades: {grenades}")
+
+        # print(helmet, headset,mask, armor, backpack, grenades, gun, customized_weapon)
+        # print(f"customized_weapon: {customized_weapon}")
+
+        return helmet, armor, backpack, grenades, gun, customized_weapon
+    else:
+
+        masks_query = """query Items {items(name: "Mask", types: wearable) {name iconLink}}"""
+        mask = requester(masks_query, "Mask")
+        # print(f"Mask: {mask}")
+
+        headset_query = """query Items {items(name: "Headset", types: wearable) {name iconLink}}"""
+        headset = requester(headset_query, "Headset")
+        # print(f"Headset: {headset}")
+        
+        armor_query = """query Armor {items(name: "Armor", types: armor) {name iconLink}}"""
+        armor = requester(armor_query, "Armor")
+        # print(f"Armor: {armor}")
+
+        backpack_query = """query Gear {items(name: "Backpack") {name iconLink}}"""
+        backpack = requester(backpack_query, "Backpack")
+        # print(f"Backpack: {backpack}")
+        
+        gun_query = """query Weapon {items(types: gun) {name iconLink}}"""
+        gun = requester(gun_query, "Weapon")
+        # print(f"Weapon: {gun}")
+        
+        yes_no = ["Yes", "No"]
+        customized_weapon = random.choice(yes_no)
+        # print(f"Customized Weapon: {customized_weapon}")
+
+        grenade_query = """query Weapon {items(types: grenade) {name iconLink}}"""
+        grenades = requester(grenade_query, "Grenades")
+        # print(f"Grenades: {grenades}")
+
+        # print(f"customized_weapon: {customized_weapon}")
+        # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
+        return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
     
-    # masks_query = """query Items {items(name: "Mask", types: wearable) {name iconLink}}"""
-    # mask = requester(masks_query, "Mask", blocking)
-    # # print(f"Mask: {mask}")
+# return helmet 
 
-    # headset_query = """query Items {items(name: "Headset", types: wearable) {name iconLink}}"""
-    # headset = requester(headset_query, "Headset", blocking)
-    # # print(f"Headset: {headset}")
-    
-    # armor_query = """query Armor {items(name: "Armor", types: armor) {name iconLink}}"""
-    # armor = requester(armor_query, "Armor", blocking)
-    # # print(f"Armor: {armor}")
-
-    # backpack_query = """query Gear {items(name: "Backpack") {name iconLink}}"""
-    # backpack = requester(backpack_query, "Backpack", blocking)
-    # # print(f"Backpack: {backpack}")
-    
-    # gun_query = """query Weapon {items(types: gun) {name iconLink}}"""
-    # gun = requester(gun_query, "Weapon", blocking)
-    # # print(f"Weapon: {gun}")
-    
-    # yes_no = ["Yes", "No"]
-    # customized_weapon = random.choice(yes_no)
-    # # print(f"Customized Weapon: {customized_weapon}")
-
-    # grenade_query = """query Weapon {items(types: grenade) {name iconLink}}"""
-    # grenades = requester(grenade_query, "Grenades", blocking)
-    # print(f"Grenades: {grenades}")
-
-    # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
-    # print(f"customized_weapon: {customized_weapon}")
-    # return helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon
-    return helmet 
-
-def requester(query, type, blocking):
+def requester(query, type):
     headers = {"Content-Type": "application/json"}
     data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
     if data.status_code == 200:
         response = data.json()
-        list_of_items = [(type, item['name'], item['iconLink']) for item in response['data']['items']]
-        for i in list_of_items:
-            # print(f"TYPE : {type}")
-            # i.append(type)
-            # pprint(i)
-            print('--')
-        list_of_items.append("empty", "")
-        # print(list_of_items)
-        random_string = random.choice(list_of_items)
-        print(random_string, type)
-        return random_string, type
+        # print(response)
+        if type == 'Helmet':
+            list_of_items = [[type, item['blocksHeadphones'], item['name'], item['iconLink']] for item in response['data']['items']]
+            list_of_items.append("empty")
+            # random_string = random.choice(list_of_items)
+        else: 
+            list_of_items = [[type, item['name'], item['iconLink']] for item in response['data']['items']]
+            list_of_items.append("empty")
+            random_string = random.choice(list_of_items)
+            # print(random_string, type)
+        return random_string
+    
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
 

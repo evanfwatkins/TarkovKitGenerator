@@ -30,13 +30,13 @@ def update_boxes(n_clicks):
         request = api.kit_generator()
         cusomize_weapon = request[7]
         new_request = request[:-1]
-
+        print(new_request)
         boxes = [
             html.Div(
                 [
-                    html.Div(item[1], className="headers"),
-                    html.Div(item[0][0], className="name"),
-                    html.Div([html.Img(src=item[0][1], className="img")], className="divImg"),
+                    html.Div(item[0], className="headers"),
+                    html.Div(item[2], className="name"),
+                    html.Div([html.Img(src=item[3], className="img")], className="divImg"),
                 ],
                 className="box",
             )
