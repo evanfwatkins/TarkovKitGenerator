@@ -2,6 +2,8 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import assets.tarkov_api as api
+import numpy as np
+import pprint
 
 # Initialize app
 app = dash.Dash(__name__)
@@ -28,15 +30,18 @@ def update_boxes(n_clicks):
         return [html.Div("", className="empty")]
     try:
         request = api.kit_generator()
+        # pprint.pprint(request)
         cusomize_weapon = request[7]
+        # print(f"cusomize_weapon: {cusomize_weapon}")
         new_request = request[:-1]
-        print(new_request)
+        # print('=---=')
+        pprint.pprint(new_request)
         boxes = [
             html.Div(
                 [
                     html.Div(item[0], className="headers"),
-                    html.Div(item[2], className="name"),
-                    html.Div([html.Img(src=item[3], className="img")], className="divImg"),
+                    html.Div(item[1], className="name"),
+                    html.Div([html.Img(src=item[2], className="img")], className="divImg"),
                 ],
                 className="box",
             )
@@ -53,6 +58,7 @@ def update_boxes(n_clicks):
         return data
     
     except Exception as e:
+        print(e)
         return [html.Div(f"Error: {e}", className="box") for _ in range(10)]
 
 if __name__ == "__main__":

@@ -143,6 +143,9 @@ body {
 .img{
   border: solid;
   border-color: black;
+  width: 200px;   /* Adjust as needed */
+  height: auto;  /* Keeps the aspect ratio */
+  object-fit: contain; /* Ensures the image isn't stretched */
 }
 
 .customizeWeapon {
