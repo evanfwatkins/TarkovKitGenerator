@@ -30,7 +30,7 @@ def update_boxes(n_clicks):
         return [html.Div("", className="empty")]
     try:
         request = api.kit_generator()
-        print(request)
+        # print(request)
         cusomize_weapon = request[8]
         # print(f"cusomize_weapon: {cusomize_weapon}")
         new_request = request[:-1]

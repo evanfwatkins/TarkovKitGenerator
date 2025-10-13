@@ -12,80 +12,83 @@ def image_by_name(body):
     return default_variant
 
 def kit_generator():
-    # parse each response into a more formatted list
-    # select a random index from the new list of items
-    blocking = False
-
+    
     helmet_query = """query Helmets {items(name: "Helmet") {name inspectImageLink blocksHeadphones types}}"""
     helmet = requester(helmet_query, 'Helmet')
-    # print(f"Helmet: {helmet}")
-    if helmet[1] == True:
-        helmet = [helmet[0], helmet[2], helmet[3]]
+
+    if helmet[2] == True:
+        blocking_helmet = [helmet[0], helmet[1], helmet[2]]
+        # print(f"blocking_helmet: {blocking_helmet}")
+ 
         headset = ['Headset', 'Empty', '']
+        # print(f"headset: {headset}")
+
         mask = ['Mask', 'Empty', '']
+        # print(f"mask: {mask}")
         
         rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
         rig = requester(rig_query, "Chest Rig")
+        # print(f"rig: {rig}")
 
-        armor_query = """query Armor {items(name: "Armor", types: armor) {name inspectImageLink}}"""
+        armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
         armor = requester(armor_query, "Armor")
-        # print(f"Armor: {armor}")
+        # print(f"armor: {armor}")
 
         backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
         backpack = requester(backpack_query, "Backpack")
-        # print(f"Backpack: {backpack}")
+        # print(f"backpack: {backpack}")
+        
+        gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
+        base_gun = requester(gun_query, "Weapon")
+        gun = image_by_name(base_gun)
+        # print(f"gun: {gun}")
+        
+        yes_no = ["Yes", "No"]
+        customized_weapon = random.choice(yes_no)
+        # print(f"Customized Weapon: {customized_weapon}")
+
+        grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
+        grenades = requester(grenade_query, "Grenades")
+        # print(f"grenades: {grenades}")
+
+        # print(helmet, rig, armor, backpack, grenades, gun, customized_weapon)
+        return blocking_helmet, rig, armor, backpack, grenades, gun, customized_weapon
+    else:        
+        helmet = [helmet[0], helmet[1], helmet[2]]
+        # print(helmet)
+
+        masks_query = """query Items {items(name: "Mask", types: wearable) {name inspectImageLink } fleaMarket {enabled}}"""
+        mask = requester(masks_query, "Mask")
+        # print(mask)
+
+        headset_query = """query Items {items(name: "Headset", types: wearable) {name inspectImageLink}}"""
+        headset = requester(headset_query, "Headset")
+        # print(headset)        
+        
+        rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
+        rig = requester(rig_query, "Chest Rig")
+        # print(rig)
+        
+        armor_query = """query MyQuery {items(type: rig, types: armor) {name inspectImageLink}}"""
+        armor = requester(armor_query, "Armor")
+        # print(armor)
+
+        backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
+        backpack = requester(backpack_query, "Backpack")
+        # print(backpack)
         
         gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
         base_gun = requester(gun_query, "Weapon")
         gun = image_by_name(base_gun)
         # print(gun)
-        
-        # print(f"Weapon: {gun}")
-        
+
         yes_no = ["Yes", "No"]
         customized_weapon = random.choice(yes_no)
         # print(f"Customized Weapon: {customized_weapon}")
 
         grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
         grenades = requester(grenade_query, "Grenades")
-        # print(f"Grenades: {grenades}")
-
-        # print(helmet, rig, armor, backpack, grenades, gun, customized_weapon)
-        return helmet, rig, armor, backpack, grenades, gun, customized_weapon
-    else:        
-        helmet = [helmet[0], helmet[2], helmet[3]]
-        masks_query = """query Items {items(name: "Mask", types: wearable) {name inspectImageLink } fleaMarket {enabled}}"""
-        mask = requester(masks_query, "Mask")
-        # print(f"Mask: {mask}")
-
-        headset_query = """query Items {items(name: "Headset", types: wearable) {name inspectImageLink}}"""
-        headset = requester(headset_query, "Headset")
-        # print(f"Headset: {headset}")
-        
-        
-        rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
-        rig = requester(rig_query, "Chest Rig")
-
-        
-        armor_query = """query MyQuery {items(type: rig, types: wearable) {name inspectImageLink}}"""
-        armor = requester(armor_query, "Armor")
-        # print(f"Armor: {armor}")
-
-        backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
-        backpack = requester(backpack_query, "Backpack")
-        # print(f"Backpack: {backpack}")
-        
-        gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
-        base_gun = requester(gun_query, "Weapon")
-        gun = image_by_name(base_gun)
-        
-        yes_no = ["Yes", "No"]
-        customized_weapon = random.choice(yes_no)
-        # print(f"Customized Weapon: {customized_weapon}")
-
-        grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-        grenades = requester(grenade_query, "Grenades")
-        # print(f"Grenades: {grenades}")
+        # print(grenades)
 
         # print(f"customized_weapon: {customized_weapon}")
 
@@ -100,23 +103,26 @@ def requester(query, type):
         # print(response)
         if type == 'Helmet':
             helmets_with_type = [i for i in response['data']['items'] if 'glasses' not in i['types']]             
-            # print(f"rigs_with_type : {rigs_with_type}")
             helmets = [list(d.values()) for d in helmets_with_type]
+            # print(f'helmets>helmet list: {helmets}')
             list_of_helmets = []
-            # Remove types: [glasses]
             for i in helmets:
-                print(i)
-                i.remove(i[3])
+                # print(i)
                 i.insert(0, type)
-                print(i)
+                i.remove(i[3])
+                # print(i)
                 list_of_helmets.append(i)
-            print(list_of_helmets)
-            # list_of_items = [[type, item['blocksHeadphones'], item['name'], item['inspectImageLink']] for item in response['data']['items']]
-            # list_of_items.append("empty")
-            random_string = random.choice(list_of_items)
+            random_string = random.choice(list_of_helmets)
+            # print(random_string)
             return random_string
         else: 
-            # print(type)
+            print(type)
+            if type == 'Armor':
+                print(response)
+                armor_with_type = [i for i in response['data']['items'] if 'armor' in i['types']]
+                print(f"armor_with_type: {armor_with_type}")
+                armors = [list(d.values()) for d in armor_with_type]
+                print(f"Armors: {armors}")
             if type == 'Chest Rig':
                 rigs_with_type = [i for i in response['data']['items'] if 'armor' not in i['types']]             
                 # print(f"rigs_with_type : {rigs_with_type}")
