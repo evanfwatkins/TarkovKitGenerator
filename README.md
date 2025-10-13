@@ -7,10 +7,10 @@ To start the application run 'app.py'
 
 
 ## Upcoming Changes
-1. Optimize GraphQL queries from Tarkov API.  
-    1. Helmets that block headphones and masks
-    2. Seeing some arena items  
-    3. Remove helmets with "glasses" type. See rigs python handling for "types" example
-2. Resolve "Empty" box spacing and URL whitespace
-3. Add a grenade quantifier if its not 'empty' 
-3. Add knives to the Weapons list
+1. Fix helmet for loop for time when 'types' doesn't get removed.
+1. Add a grenade quantifier if its not 'empty' 
+2. Fix chest rig and armor conflict
+3. Optimize GraphQL queries from Tarkov API. Some arena masks still show. (check for a pve query)  
+4. Resolve "Empty" box spacing and URL whitespace
+5. Fix the tiny black box when n_clicks = 0
+6. Add knives to the Weapons list (?)
