@@ -131,8 +131,13 @@ body {
     background-color: rgb(92, 81, 72);
     color: white;
     text-align: center;
+    display: flex;
     position: sticky;
+    align-self: stretch;
     height: -webkit-fill-available;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .divImg{
@@ -143,9 +148,12 @@ body {
 .img{
   border: solid;
   border-color: black;
-  width: 200px;   /* Adjust as needed */
-  height: auto;  /* Keeps the aspect ratio */
+  width: 170px;   /* Adjust as needed */
+  height: 100px;         /* keeps them consistent */
   object-fit: contain; /* Ensures the image isn't stretched */
+  object-fit: contain;   /* preserves proportions without stretching */
+  display: block;        /* avoids inline spacing issues */
+  margin: 0 auto;        /* centers inside containers */
 }
 
 .customizeWeapon {
