@@ -18,7 +18,7 @@ def kit_generator():
         rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
         rig = requester(rig_query, "Chest Rig")
         print(rig)
-        if "plate carrier" in rig[1]:
+        if "plate carrier" or "armored rig" in rig[1]:
             armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
             backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
             backpack = requester(backpack_query, "Backpack")
