@@ -3,35 +3,16 @@ from pprint import pprint
 import assets.tarkov_api as api
 import random
 
-def image_by_name(body, type):
-    list = body
-    name = list[1]
-    # print(f"list: {list}")
-    # print(f"name: {name}", f"type: {type}")
-    if type == "Gun":
-        get_default_variant_query = """query Weapon {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
-        default_variant = default_variant_requester(get_default_variant_query)
-        default_variant.insert(0, "Gun")
-        return default_variant
-    if type == "Helmet":
-        # print(list)
-        # print(name)
-        get_default_variant_query = """query Helmet {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
-        default_variant = default_variant_requester(get_default_variant_query)
-        default_variant.insert(0, "Helmet")
-        # print(default_variant)
-
-
-        return default_variant    
-
-def kit_generator():
-    
+def kit_generator():    
     helmet_query = """query Helmets {items(name: "Helmet" types: [wearable]) {name inspectImageLink blocksHeadphones types}}"""
     helmet = requester(helmet_query, 'Helmet')
+    # print(helmet)
+    # print(helmet[3])
     if helmet[3] == True:
         base_helmet = helmet
         blocking_helmet = image_by_name(base_helmet, "Helmet")
-        blocking_helmet = ["Helmet", helmet[0], helmet[1]]
+        print(f"blocking_helmet: {blocking_helmet}")
+        blocking_helmet = ["Helmet", blocking_helmet[1], blocking_helmet[2]]
         headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
         mask = ['Mask', 'Empty', '/assets/images/empty_mask_image.png']
         rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
@@ -100,8 +81,6 @@ def kit_generator():
             # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
             return helmet, mask, headset, rig, armor, backpack, grenades, gun, customized_weapon
 
-        
-    
 def requester(query, type):
     headers = {"Content-Type": "application/json"}
     data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
@@ -127,6 +106,7 @@ def requester(query, type):
                     i.insert(0, type)
                     list_of_masks.append(i)
                 random_string = random.choice(list_of_masks)
+                # print(f"mask random_string: {random_string}")
                 return random_string
             if type == 'Armor':
                 list_of_armor = []
@@ -157,36 +137,56 @@ def requester(query, type):
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
 
+def image_by_name(body, type):
+    list = body
+    name = list[1]
+    # print(f"list: {list}")
+    # print(f"name: {name}", f"type: {type}")
+    if type == "Weapon":
+        get_default_variant_query = """query Weapon {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
+        default_variant = default_variant_requester(get_default_variant_query)
+        default_variant.insert(0, "Weapon")
+        return default_variant
+    if type == "Helmet":
+        # print(list)
+        # print(name)
+        get_default_helmet_variant_query = """query Helmet {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
+        # print(get_default_helmet_variant_query)
+        default_helmet_variant = default_variant_requester(get_default_helmet_variant_query)
+        default_helmet_variant.insert(0, "Helmet")
+        # print(f"default_helmet_variant: {default_helmet_variant}")
+        # print(default_helmet_variant)
+        return default_helmet_variant  
+    else:
+        print(f"Error with: {list}")
+
 def default_variant_requester(query):
     headers = {"Content-Type": "application/json"}
     data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
     if data.status_code == 200:
         response = data.json()
         # print(response)
-        list_of_items = [[item['name'], item['inspectImageLink']] for item in response['data']['itemsByName']]
-        # print(f"list_of_items_in_variant_requester: {list_of_items}")
-        # print(list_of_items)
-        for i in list_of_items:
-            names = i[0]
-            image = i[1]
-            print(names)
-            if check_last_word(names, "Default"):
-                name_and_image = [names, image]
-                # print(True)
-                # print(i)
-                return name_and_image
-            else:
-                # print(False)
-                # print(i)
-                name_and_image = [names, image]
-                # print(name_and_image)
-                return name_and_image
+        names_list = [list(m.values()) for m in response["data"]["itemsByName"]]
+
+        # print(f"list_of_names: {names_list}")
+        response_count = len(names_list)
+
+        if response_count > 1:
+            # Try to find a "Default" variant
+            default_item = next((i for i in names_list if "Default" in i[0]), None)
+            name_and_image = default_item if default_item else names_list[0]
+            # print(f"name_and_image: {name_and_image}")
+            return name_and_image
+        else:
+            name_and_image = names_list[0]
+            # print(name_and_image)
+            return name_and_image
     else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
+        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
 
 def check_last_word(main_string, target_word):
     words = main_string.split()
-    print(words)
+    # print(words)
     if not words:
         return False
     last_word = words[-1]
