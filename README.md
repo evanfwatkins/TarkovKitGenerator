@@ -1,6 +1,5 @@
-TarkovKitGenerator
-=======
-
+### TarkovKitGenerator
+## github repo https://github.com/evanfwatkins/TarkovKitGenerator
 ## Uses open source data from Tarkov API https://github.com/the-hideout/tarkov-api
 ## Tarkov Database https://api.tarkov.dev/
 To start the application run 'app.py'
