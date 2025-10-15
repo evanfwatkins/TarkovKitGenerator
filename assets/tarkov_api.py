@@ -135,7 +135,7 @@ def requester(query, type):
                 return random_string
     
     else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(response.status_code, query))
+        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
 
 def image_by_name(body, type):
     list = body
