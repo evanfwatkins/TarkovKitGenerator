@@ -4,13 +4,6 @@ import assets.tarkov_api as api
 import random
 import math
 
-def biased_random_power(max_value=8, exponent=1.5):
-    # Generate a uniform random float between 0 and 1
-    uniform_random = random.random()
-    biased_value = max_value * (1 - math.pow(1 - uniform_random, exponent))
-    value = round(biased_value)
-    return value
-
 def kit_generator():    
     helmet_query = """query Helmets {items(name: "Helmet" types: [wearable]) {name inspectImageLink blocksHeadphones types}}"""
     helmet = requester(helmet_query, 'Helmet')
