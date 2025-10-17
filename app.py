@@ -2,7 +2,7 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import assets.tarkov_api as api
-import numpy as np
+import random
 import pprint
 
 # Initialize app
@@ -39,19 +39,14 @@ def update_boxes(n_clicks, map_choice):
         return [html.Div("", className="empty")]
     try:
         request = api.kit_generator()
-        # print(request)
         cusomize_weapon = request[8]
-        # print(f"cusomize_weapon: {cusomize_weapon}")
         new_request = request[:-1]
-        # print('=---=')
-        print(new_request)
         new_request_list = list(new_request)
-        print(new_request_list)
         
         if map_choice == 'yes':
-            maps = ['Customs', 'Woods', 'Shoreline', 'Interchange', 'Labs', 'Reserve', 'Lighthouse', 'Streets of Tarkov', "Factory", "The Labyrinth"] 
-            selected_map = np.random.choice(maps)
-            print(selected_map)
+            maps = ['Customs', 'Woods', 'Shoreline', 'Interchange', 'Labs', 'Reserve', 'Lighthouse', 'Streets', "Factory", "Labrynth", "Ground_Zero"] 
+            selected_map = random.choice(maps)
+            map = ['Map', selected_map, f'/assets/images/{selected_map.lower()}._image.png']
             map = ['Map', selected_map, f'/assets/images/{selected_map.lower()}_image.png']
             new_request_list.append(map)
             boxes = [
