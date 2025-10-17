@@ -85,9 +85,9 @@ body {
 
 #box-container {
     display: flex;
-    border: solid;
+    /* border: solid;
     border-color: black;
-    border-width: 2px;
+    border-width: 2px; */
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     justify-items: center;
@@ -123,8 +123,9 @@ body {
     padding: 2px;
     height: auto;
     display: flow;
-    font-weight: bold;
-}
+    background-color: transparent;
+    border: none;
+  }
 
 .name {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
