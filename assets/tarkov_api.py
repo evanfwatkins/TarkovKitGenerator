@@ -53,8 +53,7 @@ def kit_generator():
             mask = requester(masks_query, "Mask")
             if mask[2] == True:
                 mask = [mask[0], mask[1], mask[3]] 
-                headset_query = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
-                headset = requester(headset_query, "Headset")        
+                headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']        
                 rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
                 rig = requester(rig_query, "Chest Rig")        
                 if "plate carrier" or "armored rig" in rig[1]:
