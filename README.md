@@ -5,5 +5,5 @@
 To start the application run 'app.py'
 
 ## Upcoming Changes
-1. Fix the tiny black box when n_clicks = 0
-2. Map Randomizer
+1. Get a image for each map and work that into the map randomizer
+2. Fix the display of box-container. It's too wide currently
