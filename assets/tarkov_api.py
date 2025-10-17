@@ -2,12 +2,23 @@ import requests
 from pprint import pprint 
 import assets.tarkov_api as api
 import random
+import math
+
+def biased_random_power(max_value=8, exponent=1.5):
+    # Generate a uniform random float between 0 and 1
+    uniform_random = random.random()
+    biased_value = max_value * (1 - math.pow(1 - uniform_random, exponent))
+    value = round(biased_value)
+    return value
 
 def kit_generator():    
     helmet_query = """query Helmets {items(name: "Helmet" types: [wearable]) {name inspectImageLink blocksHeadphones types}}"""
     helmet = requester(helmet_query, 'Helmet')
-    # print(helmet)
-    # print(helmet[3])
+
+    grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
+    grenade_quantity = random.randint(1, 6)
+    grenades = requester(grenade_query, f"Grenades x{grenade_quantity}")
+
     if helmet[3] == True:
         base_helmet = helmet
         blocking_helmet = image_by_name(base_helmet, "Helmet")
@@ -17,8 +28,8 @@ def kit_generator():
         mask = ['Mask', 'Empty', '/assets/images/empty_mask_image.png']
         rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
         rig = requester(rig_query, "Chest Rig")
-        print(rig)
-        if "plate carrier" in rig[1]:
+        # print(rig)
+        if "plate carrier" or "armored rig" in rig[1]:
             armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
             backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
             backpack = requester(backpack_query, "Backpack")
@@ -27,8 +38,7 @@ def kit_generator():
             gun = image_by_name(base_gun, "Weapon")
             yes_no = ["Yes", "No"]
             customized_weapon = random.choice(yes_no)
-            grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-            grenades = requester(grenade_query, "Grenades")
+            
         else: 
             armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
             armor = requester(armor_query, "Armor")
@@ -39,8 +49,6 @@ def kit_generator():
             gun = image_by_name(base_gun, "Weapon")
             yes_no = ["Yes", "No"]
             customized_weapon = random.choice(yes_no)
-            grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-            grenades = requester(grenade_query, "Grenades")
 
         return blocking_helmet, headset, mask, rig, armor, backpack, grenades, gun, customized_weapon
     else:        
@@ -65,9 +73,6 @@ def kit_generator():
                     gun = image_by_name(base_gun, "Weapon")
                     yes_no = ["Yes", "No"]
                     customized_weapon = random.choice(yes_no)
-                    grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-                    grenades = requester(grenade_query, "Grenades")
-                    # print(f"grenades: {grenades}")
                 else: 
                     armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
                     armor = requester(armor_query, "Armor")
@@ -78,11 +83,7 @@ def kit_generator():
                     gun = image_by_name(base_gun, "Weapon")
                     yes_no = ["Yes", "No"]
                     customized_weapon = random.choice(yes_no)
-                    grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-                    grenades = requester(grenade_query, "Grenades")
-                    # print(f"grenades: {grenades}")
-
-                # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
+                    # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
                 return helmet, mask, headset, rig, armor, backpack, grenades, gun, customized_weapon
             else:
                 mask = [mask[0], mask[1], mask[3]] 
@@ -99,11 +100,6 @@ def kit_generator():
                 gun = image_by_name(base_gun, "Weapon")
                 yes_no = ["Yes", "No"]
                 customized_weapon = random.choice(yes_no)
-                
-                grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-                grenades = requester(grenade_query, "Grenades")
-                # print(grenades)
-
                 # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
                 return helmet, mask, headset, rig, armor, backpack, grenades, gun, customized_weapon
 
