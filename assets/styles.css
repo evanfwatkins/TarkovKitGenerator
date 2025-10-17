@@ -83,6 +83,49 @@ body {
   box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24); /* Lowers the shadow */
 }
 
+.dash-dropdown {
+    width: 15%;
+    margin: 10px auto;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.dash-dropdown .Select-control {
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 10px;
+    color: #e0e0e0;
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    transition: all 0.2s ease;
+}
+
+.dash-dropdown .Select-control:hover {
+    border-color: #888;
+}
+
+.dash-dropdown .Select-value-label {
+    color: #f0f0f0 !important;
+}
+
+.dash-dropdown .Select-menu-outer {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+.dash-dropdown .Select-option {
+    color: #ccc;
+    padding: 10px;
+}
+
+.dash-dropdown .Select-option.is-focused {
+    background-color: #3a3a3a;
+}
+
+.dash-dropdown .Select-option.is-selected {
+    background-color: #4a4a4a;
+    color: #fff;
+}
+
 #box-container {
     display: flex;
     /* border: solid;
