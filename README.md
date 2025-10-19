@@ -5,5 +5,7 @@
 To start the application run 'app.py'
 
 ## Upcoming Changes
-1. Get a image for each map and work that into the map randomizer
-2. Fix the display of box-container. It's too wide currently
+1. Add a text box to describe some known issues, new features, space for whatever text. 
+2. New feature branch to create a weapon randomizer functionailty (feature/weapon_randomizer)
+    
+    
