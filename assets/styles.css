@@ -2,6 +2,46 @@ html {
   color-scheme: dark;
 }
 
+.navbar {
+    background-color: #1e1e1e;
+    padding: 12px 0;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Segoe UI", sans-serif;
+    margin-bottom: 20px;
+}
+
+.gun_cust-link {
+    color: #f5b042;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.stats-link:hover {
+    color: #ffd37a;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-link {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-link:hover {
+    color: #f5b042;
+    transform: scale(1.05);
+}
+
 body {
   /* background-image: url('C:\Users\evanf\Code\TarkovKitGenerator\assets\images\TarkovWallpaperGPUANDREDKEYCARD.png'); Replace 'your-image.jpg' with the path to your image */
   background-image: url('/assets/images/TarkovWallpaperGPUANDREDKEYCARD.png'); /* Replace 'your-image.jpg' with the path to your image */

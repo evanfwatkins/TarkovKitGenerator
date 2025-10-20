@@ -8,8 +8,6 @@ register_page(__name__, path="/kit")
 layout = html.Div([
     html.Div(
         [
-            html.H2("Kit Generator"),
-            html.Button("Submit", id="btn"),
             html.H2("Randomize Map"),
             dcc.Dropdown(
                 id='map-dropdown',
@@ -19,6 +17,7 @@ layout = html.Div([
                 ],
                 value='no'
             ),
+            html.Button("Submit", id="btn"),
             html.Div(id="box-container", className="box-container")
         ],
         className="pageLayout"
@@ -60,9 +59,45 @@ def update_boxes(n_clicks, map_choice):
             for item in new_request_list
         ]
 
+        # Conditional Customized Weapon display
+
+        if customized_weapon == "Yes":
+            gun_name = new_request_list[5][1]
+            weapon_div = html.Div(
+                [
+                    html.Span("Customized Weapon: Yes", className="name"),
+                    html.Span(" | "),
+                    dcc.Link(
+                        "Gun Customizer",
+                        href=f"/gun_customizer?gun={gun_name}",
+                        className="gun_cust-link"
+                    )
+                ],
+                style={"textAlign": "center", "marginTop": "10px"}
+            )
+        else:
+            # comment me back in!!!!!!!!!
+            # weapon_div = html.Div(
+            #     html.Span(f"Customized Weapon: {customized_weapon}", className="name"),
+            #     style={"textAlign": "center", "marginTop": "10px"}
+            # )\
+            gun_name = new_request_list[5][1]
+            weapon_div = html.Div(
+                [
+                    html.Span("Customized Weapon: Yes", className="name"),
+                    html.Span(" | "),
+                    dcc.Link(
+                        "Gun Customizer",
+                        href=f"/gun_customizer?gun={gun_name}",
+                        className="gun_cust-link"
+                    )
+                ],
+                style={"textAlign": "center", "marginTop": "10px"}
+            )
+
         data = html.Div([
             html.Div(boxes, className="my-div-style"),
-            html.Div([html.Div("Customized Weapon: " + customized_weapon, className="name")])
+            weapon_div
         ])
 
         return data
