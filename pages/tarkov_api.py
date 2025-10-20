@@ -1,6 +1,7 @@
 import requests
-from pprint import pprint 
-import assets.tarkov_api as api
+from pprint import pprint
+from pages import tarkov_api as api
+import pages.tarkov_api as api
 import random
 import math
 
