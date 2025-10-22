@@ -3,7 +3,7 @@ from dash import html, dcc
 
 # Initialize Dash app with multipage support
 # app = dash.Dash(__name__, use_pages=True)
-app = dash.Dash(__name__, use_pages=True)
+app = dash.Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
 
 server = app.server  # For deployment
 
@@ -17,7 +17,7 @@ app.layout = html.Div(
         [
             html.Div(
                 [
-                    html.A("Tarkov Kit Generator", href="/kit", className="nav-link"),
+                    html.A("Tarkov Kit Generator", href="/kit", className="nav-link")
                 ],
                 className="nav-links"
             )

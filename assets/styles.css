@@ -5,12 +5,13 @@ html {
 .navbar {
     background-color: #1e1e1e;
     padding: 12px 0;
+    width: fit-content;
+    justify-self: anchor-center;
     border-bottom: 1px solid #444;
-    display: flex;
-    justify-content: center;
     align-items: center;
     font-family: "Segoe UI", sans-serif;
     margin-bottom: 20px;
+    align-content: center;
 }
 
 .gun_cust-link {
@@ -127,6 +128,8 @@ body {
     width: 15%;
     margin: 10px auto;
     font-family: 'Roboto Mono', monospace;
+    display: inline-block;
+
 }
 
 .dash-dropdown .Select-control {
@@ -136,34 +139,45 @@ body {
     color: #e0e0e0;
     box-shadow: 0 0 6px rgba(0,0,0,0.6);
     transition: all 0.2s ease;
+    display: inline-block;
+
 }
 
 .dash-dropdown .Select-control:hover {
     border-color: #888;
+    display: inline-block;
 }
 
 .dash-dropdown .Select-value-label {
     color: #f0f0f0 !important;
+    display: inline-block;
 }
 
 .dash-dropdown .Select-menu-outer {
     background-color: #2a2a2a;
     border: 1px solid #444;
     border-radius: 10px;
+    display: inline-block;
+
 }
 
 .dash-dropdown .Select-option {
     color: #ccc;
     padding: 10px;
+    display: inline-block;
 }
+
+    
 
 .dash-dropdown .Select-option.is-focused {
     background-color: #3a3a3a;
+    display: inline-block;
 }
 
 .dash-dropdown .Select-option.is-selected {
     background-color: #4a4a4a;
     color: #fff;
+    display: inline-block;
 }
 
 #box-container {
