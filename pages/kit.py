@@ -62,26 +62,29 @@ def update_boxes(n_clicks, map_choice):
         # Conditional Customized Weapon display
 
         if customized_weapon == "Yes":
-            gun_name = new_request_list[5][1]
+            gun_name = new_request_list[7][1]
+            gun_image = new_request_list[7][2]
+            # print(gun_name)
             weapon_div = html.Div(
                 [
                     html.Span("Customized Weapon: Yes", className="name"),
                     html.Span(" | "),
                     dcc.Link(
                         "Gun Customizer",
-                        href=f"/gun_customizer?gun={gun_name}",
+                        href=f"/gun_customizer?gun={gun_name}&img={gun_image}",
                         className="gun_cust-link"
                     )
                 ],
                 style={"textAlign": "center", "marginTop": "10px"}
             )
         else:
-            # comment me back in!!!!!!!!!
+            # comment me back in!!!!!!!!! 
             # weapon_div = html.Div(
             #     html.Span(f"Customized Weapon: {customized_weapon}", className="name"),
             #     style={"textAlign": "center", "marginTop": "10px"}
             # )\
-            gun_name = new_request_list[5][1]
+            gun_name = new_request_list[7][1]
+            # print(gun_name)
             weapon_div = html.Div(
                 [
                     html.Span("Customized Weapon: Yes", className="name"),

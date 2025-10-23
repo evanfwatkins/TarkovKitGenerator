@@ -1,138 +1,48 @@
+import dash
+from dash import html, dcc, callback, Input, Output, register_page
+from urllib.parse import parse_qs
+from dash import html, dcc, Input, Output, register_page
+import random
+from pages import tarkov_api as api  # import your logic
 from dash import html, dcc, Input, Output, register_page, callback_context
 from dash import ctx
 from dash import page_registry, page_container
 
-import dash
-
-register_page(__name__, path="/gun_customizer")
-suppress_callback_exceptions=True
+register_page(__name__, path="/gun_customizer", )
 
 layout = html.Div(
     [
-        html.Img(src="https://www.escapefromtarkov.com/build-eft-site/_nuxt/logo.WO0wViWU.webp",className="title", id="title"),
-        html.H2("Gun Customizer"),
-        html.Div(id="gun-name-container")
+        dcc.Location(id="location", refresh=False),   # <-- gives us .pathname and .search
+        html.H3("Gun Customizer"),
+        html.Div(id="gun-name-display"),
+        # ... other page content ...
     ]
 )
 
 @dash.callback(
-    Output("gun-name-container", "children", ),
-    Input("url", "search")  # dcc.Location component must exist in main layout
-) 
-def display_gun_name(search):
-    if search:
-        from urllib.parse import parse_qs
-        params = parse_qs(search.lstrip("?"))
-        print(f"params: {params}")
-        gun = params.get("gun", ["Unknown"])[0]
-        return f"Selected Gun: {gun}"
-    return "No gun selected yet."
-
-import dash
-from dash import html, dcc, Input, Output, register_page
-import random
-from pages import tarkov_api as api  # import your logic
-
-register_page(__name__, path="/kit")
-
-layout = html.Div([
-    html.Div(
-        [
-            html.H2("Randomize Map"),
-            dcc.Dropdown(
-                id='map-dropdown',
-                options=[
-                    {'label': 'Yes', 'value': 'yes'},
-                    {'label': 'No', 'value': 'no'}
-                ],
-                value='no'
-            ),
-            html.Button("Submit", id="btn"),
-            html.Div(id="box-container", className="box-container")
-        ],
-        className="pageLayout"
-    )
-])
-
-@dash.callback(
-    Output("box-container", "children"),
-    Input("btn", "n_clicks"),
-    Input("map-dropdown", "value")
+    Output("gun-name-display", "children"),
+    Input("location", "search"),
 )
 
-def update_boxes(n_clicks, map_choice):
-    if not n_clicks:
-        return [html.Div("", className="empty")]
+def show_gun_from_query(search: str):
+    # search is like "?gun=Kalashnikov%20AKS-74%20...". Could be None or ""
+    if not search:
+        return "No gun parameter provided."
+    attatchment_query = """query MyQuery {items(categoryNames: [WeaponMod]) {name image512pxLink types category {normalizedName}}}"""
+    qs = search.lstrip("?")  # remove leading '?'
+    params = parse_qs(qs)    # returns dict of lists, values are already URL-decoded
+    
+    params_list = list(params.items())
+    result = [vals[0] for (_, vals) in params_list]
 
-    try:
-        request = api.kit_generator()
-        customized_weapon = request[8]
-        new_request = request[:-1]
-        new_request_list = list(new_request)
+    gun_name = result[0]
+    gun_image = result[1]
 
-        # If map randomization is selected
-        if map_choice == 'yes':
-            maps = ['Customs', 'Woods', 'Shoreline', 'Interchange', 'Labs',
-                    'Reserve', 'Lighthouse', 'Streets', 'Factory', 'Labrynth', 'Ground_Zero']
-            selected_map = random.choice(maps)
-            map_item = ['Map', selected_map, f'/assets/images/{selected_map.lower()}_image.png']
-            new_request_list.append(map_item)
+    print(gun_name)
+    print(gun_image)
 
-        boxes = [
-            html.Div(
-                [
-                    html.Div(item[0], className="headers"),
-                    html.Div(item[1], className="name"),
-                    html.Div([html.Img(src=item[2], className="img")], className="divImg"),
-                ],
-                className="box",
-            )
-            for item in new_request_list
-        ]
-
-        # Conditional Customized Weapon display
-
-        if customized_weapon == "Yes":
-            gun_name = new_request_list[5][1]
-            weapon_div = html.Div(
-                [
-                    html.Span("Customized Weapon: Yes", className="name"),
-                    html.Span(" | "),
-                    dcc.Link(
-                        "Gun Customizer",
-                        href=f"/gun_customizer?gun={gun_name}",
-                        className="gun_cust-link"
-                    )
-                ],
-                style={"textAlign": "center", "marginTop": "10px"}
-            )
-        else:
-            # comment me back in!!!!!!!!!
-            # weapon_div = html.Div(
-            #     html.Span(f"Customized Weapon: {customized_weapon}", className="name"),
-            #     style={"textAlign": "center", "marginTop": "10px"}
-            # )\
-            gun_name = new_request_list[5][1]
-            weapon_div = html.Div(
-                [
-                    html.Span("Customized Weapon: Yes", className="name"),
-                    html.Span(" | "),
-                    dcc.Link(
-                        "Gun Customizer",
-                        href=f"/gun_customizer?gun={gun_name}",
-                        className="gun_cust-link"
-                    )
-                ],
-                style={"textAlign": "center", "marginTop": "10px"}
-            )
-
-        data = html.Div([
-            html.Div(boxes, className="my-div-style"),
-            weapon_div
-        ])
-
-        return data
-
-    except Exception as e:
-        print(e)
-        return [html.Div(f"Error: {e}", className="box") for _ in range(10)]
+    # print(f"Parsed query params: {params}")
+    gun = params.get("gun", [""])[0]  # get first value or empty string
+    if not gun:
+        return "gun param present but empty."
+    return f"Selected gun: {gun}"
