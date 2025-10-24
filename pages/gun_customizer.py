@@ -8,7 +8,7 @@ from dash import html, dcc, Input, Output, register_page, callback_context
 from dash import ctx
 from dash import page_registry, page_container
 
-register_page(__name__, path="/gun_customizer", )
+register_page(__name__, path="/gun_customizer")
 
 layout = html.Div(
     [

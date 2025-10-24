@@ -1,11 +1,13 @@
 import dash
-from dash import html, dcc
+from dash import html, dcc, Input, Output, register_page
 
 # Initialize Dash app with multipage support
 # app = dash.Dash(__name__, use_pages=True)
 app = dash.Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
 
 server = app.server  # For deployment
+
+register_page(__name__, path="/", className="homescreen")
 
 app.layout = html.Div(
     [
@@ -26,7 +28,7 @@ app.layout = html.Div(
     )
 
     ,dash.page_container
-    ]
+    ], className="header", id="header"
 )
 
 if __name__ == "__main__":
