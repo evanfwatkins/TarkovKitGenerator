@@ -125,23 +125,23 @@ h2 {
 
 
 .header {
-    opacity: 0px;;
     display: flex;
-    flex-direction: column;
+    background-color: transparent;
+    flex-direction: row;
     flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
+    align-content: stretch;
+    justify-content: space-between;
+    align-items: stretch;
 }
 
 #header {
     display: flex;
     background-color: transparent;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
+    align-content: stretch;
+    justify-content: space-between;
+    align-items: stretch;
 }
 
 /* #pageLayout {

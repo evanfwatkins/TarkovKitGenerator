@@ -27,7 +27,7 @@ navbar = html.Div(
 # Main app layout
 app.layout = html.Div(
     [
-        navbar,          # Shared across all pages
+        navbar,
         html.Div(page_container, className="page-content"),  # Active page content
     ],
     className="main-layout",
