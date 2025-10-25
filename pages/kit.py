@@ -3,23 +3,18 @@ from dash import html, dcc, Input, Output, register_page
 import random
 from pages import tarkov_api as api  # import your logic
 
-register_page(__name__, path="/kit")
+register_page(__name__, path="/kit", name="Tarkov Kit Generator")
 
-layout = html.Div([
-    html.Div(
-        [
-            html.H2("Randomize Map"),
-            dcc.Dropdown(
-                id='map-dropdown',
-                options=[
-                    {'label': 'Yes', 'value': 'yes'},
-                    {'label': 'No', 'value': 'no'}
-                ],
-                value='no'
-            ),
-            html.Button("Submit", id="btn"),
-            html.Div(id="box-container", className="box-container")
-        ],
+
+layout = html.Div(
+    [
+        html.Div(
+            [
+                html.H2("Randomize Map"),
+                dcc.Dropdown(id='map-dropdown',options=[{'label': 'Yes', 'value': 'yes'},{'label': 'No', 'value': 'no'}],value='no'),
+                html.Button("Generate Kit", id="btn"),
+                html.Div(id="box-container", className="box-container")
+            ],
         className="pageLayout"
     )
 ])

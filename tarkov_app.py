@@ -1,34 +1,36 @@
-import dash
-from dash import html, dcc, Input, Output, register_page
+from dash import Dash, html, dcc, page_container
 
-# Initialize Dash app with multipage support
-# app = dash.Dash(__name__, use_pages=True)
-app = dash.Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
+# Instantiate Dash before any register_page() calls
+app = Dash(__name__, use_pages=True)
+server = app.server  # (optional, for deployment)
 
-server = app.server  # For deployment
+# Shared navbar (persistent on all pages)
+navbar = html.Div(
+    className="navbar",
+    children=[
+        html.Img(
+            src="https://www.escapefromtarkov.com/build-eft-site/_nuxt/logo.WO0wViWU.webp",
+            className="title-logo",
+            id="title-logo",
+        ),
+        html.Div(
+            className="nav-links",
+            children=[
+                dcc.Link("Home", href="/", className="nav-link"),
+                dcc.Link("Kit Generator", href="/kit", className="nav-link"),
+                dcc.Link("Gun Customizer", href="/gun_customizer", className="nav-link"),
+            ],
+        ),
+    ],
+)
 
-register_page(__name__, path="/", className="homescreen")
-
+# Main app layout
 app.layout = html.Div(
     [
-    html.Img(
-        src="https://www.escapefromtarkov.com/build-eft-site/_nuxt/logo.WO0wViWU.webp",
-        className="title", id="title"
-    ),
-    html.Div(
-        [
-            html.Div(
-                [
-                    html.A("Tarkov Kit Generator", href="/kit", className="nav-link")
-                ],
-                className="nav-links"
-            )
-        ],
-        className="navbar"
-    )
-
-    ,dash.page_container
-    ], className="header", id="header"
+        navbar,          # Shared across all pages
+        html.Div(page_container, className="page-content"),  # Active page content
+    ],
+    className="main-layout",
 )
 
 if __name__ == "__main__":
