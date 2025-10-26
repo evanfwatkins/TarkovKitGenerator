@@ -18,7 +18,7 @@ navbar = html.Div(
             children=[
                 dcc.Link("Home", href="/", className="nav-link"),
                 dcc.Link("Kit Generator", href="/kit", className="nav-link"),
-                # dcc.Link("Gun Customizer - WIP", href="/kit", className="nav-link"),
+                dcc.Link("Gun Customizer - WIP", href="/kit", className="nav-link"),
             ],
         ),
     ],

@@ -28,8 +28,9 @@ layout = html.Div(
                         html.Ul(
                             className="sub-features-list",
                             children=[
-                                html.Li("Customize straight from the kit gerenator screen"),
-                                html.Li("Pick a gun to customize from the gun customizer page"),
+                                html.Li("Simple Yes/No for suppressor, foregrip, optic, flashlight"),
+                                html.Li("Randomized (compatible) attatchments straight from the kit gerenator screen"),
+                                html.Li(f"Select a gun to customize from the Gun Customizer page"),
                             ]
                         ),
                         html.Li("Optimize kit generator response time"),

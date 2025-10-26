@@ -44,7 +44,7 @@ def update_boxes(n_clicks, map_choice):
         # customized_weapon = "Yes"
         new_request = request[:-1]
         new_request_list = list(new_request)
-        print(f"new_request_list: {new_request_list}")
+        # print(f"new_request_list: {new_request_list}")
         # If map randomization is selected
         if map_choice == 'yes':
             maps = ['Customs', 'Woods', 'Shoreline', 'Interchange', 'Labs',
