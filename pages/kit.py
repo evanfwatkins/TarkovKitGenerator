@@ -10,8 +10,15 @@ layout = html.Div(
     [
         html.Div(
             [
-                html.H2("Randomize Map"),
-                dcc.Dropdown(id='map-dropdown',options=[{'label': 'Yes', 'value': 'yes'},{'label': 'No', 'value': 'no'}],value='no'),
+                html.Div(
+                    [
+                        dcc.Dropdown(id='map-dropdown',
+                            options=[
+                                {'label': 'Randomize Map: Yes', 'value': 'yes'},
+                                {'label': 'Randomize Map: No', 'value': 'no'}
+                        ],value='no'),
+                    ], className="map-dropdown-div"
+                ),
                 html.Button("Generate Kit", id="btn"),
                 html.Div(id="box-container", className="box-container"),
                 html.Div(id="gun-container", className="gun-container")
@@ -28,8 +35,8 @@ layout = html.Div(
     Input("map-dropdown", "value")
 )
 def update_boxes(n_clicks, map_choice):
-    # if not n_clicks:
-    #     return [html.Div("", className="empty")]
+    if not n_clicks:
+        return [html.Div("", className="empty")]
 
     try:
         request = api.kit_generator()\
