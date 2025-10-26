@@ -210,40 +210,29 @@ def check_last_word(main_string, target_word):
     return last_word == target_word
 
 
-def weapon_customizer(gun_name):
-    all_attatchments_query = """query MyQuery {items(categoryNames: [WeaponMod]) {name image512pxLink types category {normalizedName}}}"""
-    
-    magazine_query = """query MyQuery {items(categoryNames: [Magazine]) {name image512pxLink category normalizedName}}}"""
-    magazine = api.weapon_requester(magazine_query, "Magazine", gun_name)
-    
-    suppressor_query = """query MyQuery {items(categoryNames: [Silencer]) {name image512pxLink}}"""
-    suppresor = api.weapon_requester(suppressor_query, "Suppresor", gun_name)
+def weapon_customizer(gun_name):   
+    # magazine_query = ["Yes", "No"]
+    # magazine  = ["Magazine", random.choice(magazine_query)]
+    # print(f"magazine: {magazine}")
 
-    foregrip_query = """query MyQuery {items(categoryNames: [Foregrip]) {name image512pxLink}}"""
-    foregrip = api.weapon_requester(foregrip_query, "Foregrip", gun_name)
+    suppressor_query = ["Yes", "No"]
+    suppresor = ["Suppressor", random.choice(suppressor_query)]
+    # print(f"suppresor: {suppresor}")
 
+    foregrip_query = ["Yes", "No"]
+    foregrip = ["Foregrip", random.choice(foregrip_query)]
+    # print(f"foregrip: {foregrip}")
 
-    optic_query = """query MyQuery {items(categoryNames: [Scope]) {name image512pxLink}}"""
-    optic = api.weapon_requester(optic_query, "Scope", gun_name)
+    optic_query = ["Yes", "No"]
+    optic = ["Optic", random.choice(optic_query)]
+    # print(f"optic: {optic}")
 
+    flashlight_query = ["Yes", "No"]
+    flashlight = ["Flashlight", random.choice(flashlight_query)]
+    # print(f"flashlight: {flashlight}")
 
-    flashlight_query = """query MyQuery {items(categoryNames: [Flashlight]) {name image512pxLink}}"""
-    flashlight = api.weapon_requester(flashlight_query, "Flashlight", gun_name)
+    # print(magazine, suppresor, foregrip, optic, flashlight)
+    return suppresor, foregrip, optic, flashlight
 
-    print(magazine, suppresor, foregrip, optic, flashlight)
-
-def weapon_requester(query, type, gun_name):
-    headers = {"Content-Type": "application/json"}
-    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
-    if data.status_code == 200:
-        response = data.json()
-        print(response)
-        attatchments = [i for i in response['data']['items']]             
-        attatchments_list = [list(d.values()) for d in attatchments]
-
-        # print(attatchments_list)             
-    else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
-
-# if __name__ == "__main__":
-#     kit_generator()
+if __name__ == "__main__":
+    kit_generator()

@@ -35,10 +35,9 @@ layout = html.Div(
                         html.Li("Optimize kit generator response time"),
                         html.Li("Fill the page with adds and viruses"),
                         html.Li("Add required annaul subscription")
-
                     ]
                 ),
-                ],
+            ],
         ),
     ], className="header", id="header"
 )

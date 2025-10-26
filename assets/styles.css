@@ -121,12 +121,14 @@ h2 {
 
 .headers {
   display: flex;
+  background-color: #343434;
+  color: white;
 }
 
 
 .header {
     display: flex;
-    background-color: transparent;
+    background-color: #343434;
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: stretch;
@@ -400,11 +402,8 @@ h2 {
 
 .gun-container {
     display: flex;
-    border: solid; 
-    border-color: black;
-    border-width: 2px;
+    /* background-color: #343434; */
     grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
     justify-items: center;
     max-width: 1000px;
     margin: auto;
@@ -416,7 +415,16 @@ h2 {
     align-items: stretch;
 }
 
-.gun-boxes {
+.gun-box {
+  display: flex;
+  border: solid;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: baseline;
+}
+
+/* #gun-box {
     display: flex;
     border: solid; 
     border-color: black;
@@ -432,25 +440,7 @@ h2 {
     align-content: center;
     justify-content: center;
     align-items: stretch;
-}
-
-#gun-boxes {
-    display: flex;
-    border: solid; 
-    border-color: black;
-    border-width: 2px;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    justify-items: center;
-    max-width: 1000px;
-    margin: auto;
-    margin-top: 30px;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: stretch;
-}
+} */
 
 .box {
     color: white;
