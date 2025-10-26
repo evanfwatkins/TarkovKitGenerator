@@ -7,13 +7,18 @@ layout = html.Div(
     [
         html.Div(className="upcoming-features",
             children=[
-                html.H3("Known Bugs", className="features-title"),
+                html.Div(
+                    [
+                        html.H3("Known Bugs", className="features-title"),
+                        dcc.Link("GitHub Repo", href="https://github.com/evanfwatkins/TarkovKitGenerator", className="github-link"),
+                    ], className="features-title"
+                ),
                 html.Ul(
                     className="features-list",
                     children=[
-                        html.Li("Helmets, masks, and headsets may block eachother. Decide what gear to wear - Work in progress"),
-                        html.Li("Armor and armored vests get returned. Decide what gear to wear - Work in progress"),
-                        html.Li("Gun customizations are non-functional - Work in progress")
+                        html.Li("Helmets, masks, and headsets conflict. Decide what gear to wear - Work in progress"),
+                        html.Li("Armor and armored vests conflict. Decide what gear to wear - Work in progress"),
+                        html.Li("Gun customizations don't work one bit")
                     ],
                 ),
             ],
