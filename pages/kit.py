@@ -13,7 +13,9 @@ layout = html.Div(
                 html.H2("Randomize Map"),
                 dcc.Dropdown(id='map-dropdown',options=[{'label': 'Yes', 'value': 'yes'},{'label': 'No', 'value': 'no'}],value='no'),
                 html.Button("Generate Kit", id="btn"),
-                html.Div(id="box-container", className="box-container")
+                html.Div(id="box-container", className="box-container"),
+                html.Div(id="gun-container", className="gun-container")
+
             ],
         className="pageLayout"
     )
@@ -21,16 +23,19 @@ layout = html.Div(
 
 @dash.callback(
     Output("box-container", "children"),
+    # Output("gun-container", "children"),
     Input("btn", "n_clicks"),
     Input("map-dropdown", "value")
 )
 def update_boxes(n_clicks, map_choice):
-    if not n_clicks:
-        return [html.Div("", className="empty")]
+    # if not n_clicks:
+    #     return [html.Div("", className="empty")]
 
     try:
-        request = api.kit_generator()
-        customized_weapon = request[8]
+        request = api.kit_generator()\
+        # comment me back in!!!!!!!!!!!!!!
+        # customized_weapon = request[8]
+        customized_weapon = "Yes"
         new_request = request[:-1]
         new_request_list = list(new_request)
 
@@ -59,39 +64,91 @@ def update_boxes(n_clicks, map_choice):
         if customized_weapon == "Yes":
             gun_name = new_request_list[7][1]
             gun_image = new_request_list[7][2]
-            # print(gun_name)
+            # Example additional boxes for attachments, mods, etc.
+            attatchment_randomizer = api.weapon_customizer(gun_name)
+
+            
+            # print(attatchments)
             weapon_div = html.Div(
                 [
-                    html.Span("Customized Weapon: Yes", className="name"),
-                    html.Span(" | "),
-                    dcc.Link(
-                        "Gun Customizer",
-                        href=f"/gun_customizer?gun={gun_name}&img={gun_image}",
-                        className="gun_cust-link"
-                    )
+                    # html.Div("Customized Weapon", className="headers"),
+                    # html.Div([html.Div(gun_name, className="name"),
+                    # html.Img(src=gun_image, className="img")], className="divImg"),
+                    # for i in response
+                    html.Div(
+                        [
+                            html.Div("Muzzle", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+                        ], className="box"
+                    ),
+                    html.Div(
+                        [
+                            html.Div("Grip", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+                        ],
+                        className="box"
+                    ),
+                    html.Div(
+                        [
+                            html.Div("Optic", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+
+                        ],
+                        className="box"
+                    ),
+                    html.Div(
+                        [
+                            html.Div("Stock", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+
+                        ],
+                        className="box"
+                    ),
+                    html.Div(
+                        [
+                            html.Div("Magazine", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+
+                        ],
+                        className="box"
+                    ),
+                    html.Div(
+                        [
+                            html.Div("Flashlight/Lazer", className="headers"),
+                            html.Div("Name", className="name"),
+                            html.Div("img", className="img"),
+
+                        ],
+                        className="box"
+                    ),
                 ],
+                className="gun-boxes"
+            )
+                
+        else: 
+            weapon_div = html.Div(
+                html.Span(f"Customized Weapon: {customized_weapon}", className="name"),
                 style={"textAlign": "center", "marginTop": "10px"}
             )
-        else:
-            # comment me back in!!!!!!!!! 
+            # gun_name = new_request_list[7][1]
+            # # print(gun_name)
             # weapon_div = html.Div(
-            #     html.Span(f"Customized Weapon: {customized_weapon}", className="name"),
+            #     [
+            #         html.Span("Customized Weapon: Yes", className="name"),
+            #         html.Span(" | "),
+            #         dcc.Link(
+            #             "Gun Customizer",
+            #             href=f"/gun_customizer?gun={gun_name}",
+            #             className="gun_cust-link"
+            #         )
+            #     ],
             #     style={"textAlign": "center", "marginTop": "10px"}
-            # )\
-            gun_name = new_request_list[7][1]
-            # print(gun_name)
-            weapon_div = html.Div(
-                [
-                    html.Span("Customized Weapon: Yes", className="name"),
-                    html.Span(" | "),
-                    dcc.Link(
-                        "Gun Customizer",
-                        href=f"/gun_customizer?gun={gun_name}",
-                        className="gun_cust-link"
-                    )
-                ],
-                style={"textAlign": "center", "marginTop": "10px"}
-            )
+            # )
 
         data = html.Div([
             html.Div(boxes, className="my-div-style"),
