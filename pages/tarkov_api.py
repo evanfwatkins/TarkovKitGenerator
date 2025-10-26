@@ -10,7 +10,7 @@ def kit_generator():
     helmet = requester(helmet_query, 'Helmet')
 
     grenade_query = """query Weapon {items(types: grenade) {name inspectImageLink}}"""
-    grenade_quantity = random.randint(1, 6)
+    grenade_quantity = random.randint(1, 4)
     grenades = requester(grenade_query, f"Grenades x{grenade_quantity}")
 
     if helmet[3] == True:
