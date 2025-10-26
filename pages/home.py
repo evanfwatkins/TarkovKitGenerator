@@ -20,7 +20,7 @@ layout = html.Div(
         ),
         html.Div(className="upcoming-features",
             children=[
-                html.H3("Upcoming Changes (Updated: 10/25)", className="features-title"),
+                html.H3("Upcoming Changes (Updated: 10/26)", className="features-title"),
                 html.Ul(
                     className="features-list",
                     children=[
