@@ -528,3 +528,90 @@ h2 {
     align-content: center;
     align-items: stretch;
 }
+
+:root {
+    --tarkov-bg: #121312;
+    --tarkov-panel: #1a1c1a;
+    --tarkov-border: #3a3f3a;
+    --tarkov-accent: #c7a45d;   /* Tarkov amber */
+    --tarkov-text: #d6d6d6;
+    --tarkov-muted: #8a8f8a;
+}
+
+.stations {
+    background-color: var(--tarkov-panel);
+    border: 1px solid var(--tarkov-border);
+    box-shadow: inset 0 0 0 1px #0a0a0a;
+    padding: 10px 14px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-family: "Inter", "Roboto Condensed", sans-serif;
+    color: var(--tarkov-text);
+}
+
+/* ===== Control box (dropdown + mode) ===== */
+.hideout-controls {
+    background-color: var(--tarkov-panel);
+    border: 1px solid var(--tarkov-border);
+    box-shadow:
+        inset 0 0 0 1px #0d0f0d,
+        0 2px 6px rgba(0, 0, 0, 0.8);
+
+    padding: 18px 22px;
+    gap: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    color: var(--tarkov-text);
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+}
+
+/* ===== Radio group ===== */
+.hideout-mode {
+    background-color: #141614;
+    border: 1px solid var(--tarkov-border);
+    padding: 12px 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    width: 100%;
+    max-width: 220px;
+
+    color: var(--tarkov-text);
+}
+
+/* ===== Radio buttons ===== */
+.hideout-mode input[type="radio"] {
+    accent-color: var(--tarkov-accent);
+}
+
+/* ===== Radio labels ===== */
+.hideout-mode label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--tarkov-muted);
+}
+
+.hideout-mode label:hover {
+    color: var(--tarkov-accent);
+}
+
+/* ===== Selected radio ===== */
+.hideout-mode input[type="radio"]:checked + span {
+    color: var(--tarkov-accent);
+    font-weight: 600;
+}

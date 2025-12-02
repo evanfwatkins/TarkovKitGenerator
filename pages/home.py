@@ -25,11 +25,18 @@ layout = html.Div(
         ),
         html.Div(className="upcoming-features",
             children=[
-                html.H3("Upcoming Changes (Updated: 11/28)", className="features-title"),
+                html.H3("Upcoming Changes (Updated: 12/02)", className="features-title"),
                 html.Ul(
                     className="features-list",
                     children=[
-                        html.Li("Hideout upgrades and craft items page"),
+                        html.Li("Hideout functionality"),
+                        html.Ul(
+                            className="sub-features-list",
+                            children=[
+                                html.Li("Required items for station upgrades (all levels)"),
+                                html.Li("All craft item requirements")
+                            ]
+                        ),
                         html.Li("Weapon attachment randomizer"),
                         html.Ul(
                             className="sub-features-list",
