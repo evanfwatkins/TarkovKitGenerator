@@ -14,7 +14,10 @@ layout = html.Div(
                     options=[
                         {"label": s, "value": s}
                         for s in [
+                            
                             "Workbench",
+                            "Water Collector",
+                            "Heating",
                             "Intelligence Center",
                             "Medstation",
                             "Lavatory",
@@ -22,6 +25,8 @@ layout = html.Div(
                             "Security",
                             "Rest Space",
                             "Shooting Range",
+                            "Bitcoin Farm",
+                            "Vents"
                         ]
                     ],
                 ),
@@ -53,70 +58,113 @@ layout = html.Div(
 def render_hideout(station, mode):
     if not station:
         return html.Div("", className="empty")
-
     cards = []
 
     # 🔧 UPGRADE VIEW
-    if mode == "upgrade":
-        all_stations_upgrades_query = """query MyQuery {hideoutStations(gameMode: pve) {name levels {itemRequirements {item {name inspectImageLink} count}}}}"""
-        upgrades = api.get_hideout_upgrades(all_stations_upgrades_query, station)
-
-        for lvl in upgrades:
-            req_boxes = [
-                html.Div(
-                    [
-                        html.Img(src=req[2], className="img"),
-                        html.Div(req[0], className="name"),
-                        html.Div(f"x{req[1]}", className="count"),
-                    ],
-                    className="item-box",
-                )
-                for req in lvl["requirements"]
-            ]
-
-            cards.append(
-                html.Div(
-                    [
-                        html.Div(f"Level {lvl['level']}", className="headers"),
-                        html.Div(req_boxes, className="item-grid"),
-                    ],
-                    className="hideout-card",
-                )
-            )
-
+    if mode == "UPGRADES" or mode == "upgrade":
+        return render_upgrades(station)
+    
     # 🧪 CRAFT VIEW
     else:
-        crafts = api.get_hideout_crafts(station)
+        return render_crafts(station)
 
-        for craft in crafts:
-            req_boxes = [
-                html.Div(
-                    [
-                        html.Img(src=r[2], className="img"),
-                        html.Div(r[0], className="name"),
-                        html.Div(f"x{r[1]}", className="count"),
-                    ],
-                    className="item-box",
-                )
-                for r in craft["requirements"]
-            ]
+    
+def render_upgrades(station):
+    query = """query MyQuery {hideoutStations(gameMode: pve) {name levels {itemRequirements {item {name inspectImageLink} count}}}}"""
+    upgrades = api.get_hideout_upgrades(query,station)
 
-            cards.append(
-                html.Div(
-                    [
-                        html.Div(craft["name"], className="headers"),
-                        html.Div(req_boxes, className="item-grid"),
-                        html.Div(
-                            [
-                                html.Span("Produces → "),
-                                html.Img(src=craft["output"][1], className="img small"),
-                                html.Span(craft["output"][0]),
-                            ],
-                            className="craft-output",
-                        ),
-                    ],
-                    className="hideout-card",
-                )
+    if not upgrades:
+        return html.Div("", className="empty")
+
+    cards = []
+
+    for lvl in upgrades:
+        upgrade_items = [
+            html.Div(
+                [
+                    # Index 2 of the TUPLE is the Image URL
+                    html.Div(
+                        # Index 0 is the Name, Index 1 is the Count
+                        f"{item[0]} x{item[1]}", 
+                        className="name_and_count"
+                    ),
+                    html.Img(src=item[2], className="img")
+                ],
+                className="upgrade-item"
             )
+            # Loop over the list of tuples
+            for item in lvl['requirements'] 
+        ]      
+
+        cards.append(
+            html.Div(
+                [
+                    html.Div(f"Level {lvl['level']}", className="headers"),
+                    html.Div(upgrade_items, className="upgrade-card")
+                ],
+                className="upgrade-card"
+            )
+        )
+
+    return cards
+
+def render_crafts(station):
+    query = """query MyQuery {hideoutStations(gameMode: pve) {name crafts {duration requiredItems {item {name inspectImageLink} count} level rewardItems {item {name inspectImageLink}}} imageLink}}"""
+    crafts = api.get_hideout_crafts(query,station)
+
+    if not crafts:
+        return html.Div("No crafts available.", className="empty")
+
+    cards = []
+
+    for craft in crafts:
+        cards.append(
+            html.Div(
+                [
+                    html.Div(
+                        f"CRAFT • LVL {craft['level']} • {craft['duration']//3600}H",
+                        className="headers",
+                    ),
+
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [
+                                            html.Img(src=img),
+                                            html.Div(name),
+                                            html.Div(f"x{count}"),
+                                        ],
+                                        className="item-box",
+                                    )
+                                    for name, count, img in craft["requirements"]
+                                ],
+                                className="item-grid",
+                            ),
+
+                            html.Div("→", className="craft-arrow"),
+
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [
+                                            html.Img(src=img),
+                                            html.Div(name),
+                                            html.Div(f"x{count}"),
+                                        ],
+                                        className="item-box",
+                                    )
+                                    for name, count, img in craft["outputs"]
+                                ],
+                                className="item-grid",
+                            ),
+                        ],
+                        className="craft-row",
+                    ),
+                ],
+                className="craft-card",  # ✅ different class
+            )
+        )
 
     return cards

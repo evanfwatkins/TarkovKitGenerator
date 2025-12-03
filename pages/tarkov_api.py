@@ -211,7 +211,6 @@ def check_last_word(main_string, target_word):
 
     return last_word == target_word
 
-
 def weapon_customizer(gun_name):   
     # magazine_query = ["Yes", "No"]
     # magazine  = ["Magazine", random.choice(magazine_query)]
@@ -236,58 +235,110 @@ def weapon_customizer(gun_name):
     # print(magazine, suppresor, foregrip, optic, flashlight)
     return suppresor, foregrip, optic, flashlight
 
-if __name__ == "__main__":
-    kit_generator()
-
-
 # hideout stations - query MyQuery {hideoutStations(gameMode: pve) {name}}
 # All stations upgrades - query MyQuery {hideoutStations(gameMode: pve) {name levels {itemRequirements {item {name inspectImageLink} count}}}}
 
-
 def get_hideout_upgrades(query, station):
-    print(station)
     headers = {"Content-Type": "application/json"}
-    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
-    if data.status_code == 200:
-        response = data.json()
-        station_upgrade_data = [i for i in response['data']['hideoutStations'] if station in i['name']]         
-        print(station_upgrade_data)
-        """ station_upgrade_data example
-        [
-            {
-                'name': 'Lavatory', 
-                'levels': [
-                    {
-                        'itemRequirements': [
-                            {'count': 2000, 'item': {'name': 'Roubles', 'inspectImageLink': 'https://assets.tarkov.dev/5449016a4bdc2d6f028b456f-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Toilet paper', 'inspectImageLink': 'https://assets.tarkov.dev/5c13cef886f774072e618e82-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Toothpaste', 'inspectImageLink': 'https://assets.tarkov.dev/57347c93245977448d35f6e3-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Soap', 'inspectImageLink': 'https://assets.tarkov.dev/5c13cd2486f774072c757944-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Awl', 'inspectImageLink': 'https://assets.tarkov.dev/62a0a098de7ac8199358053b-image.webp'}}
-                        ]
-                    }, 
-                    {
-                        'itemRequirements': [
-                            {'count': 6, 'item': {'name': 'Corrugated hose', 'inspectImageLink': 'https://assets.tarkov.dev/59e35cbb86f7741778269d83-image.webp'}}, 
-                            {'count': 6, 'item': {'name': 'Pack of screws', 'inspectImageLink': 'https://assets.tarkov.dev/59e35ef086f7741777737012-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Electric drill', 'inspectImageLink': 'https://assets.tarkov.dev/59e35de086f7741778269d84-image.webp'}}, 
-                            {'count': 3, 'item': {'name': 'KEKTAPE duct tape', 'inspectImageLink': 'https://assets.tarkov.dev/5e2af29386f7746d4159f077-image.webp'}}, 
-                            {'count': 2, 'item': {'name': 'Sewing kit', 'inspectImageLink': 'https://assets.tarkov.dev/61bf83814088ec1a363d7097-image.webp'}}
-                        ]
-                    }, 
-                    {
-                        'itemRequirements': [
-                            {'count': 10, 'item': {'name': 'Corrugated hose', 'inspectImageLink': 'https://assets.tarkov.dev/59e35cbb86f7741778269d83-image.webp'}}, 
-                            {'count': 2, 'item': {'name': 'Pressure gauge', 'inspectImageLink': 'https://assets.tarkov.dev/5d1b327086f7742525194449-image.webp'}}, 
-                            {'count': 1, 'item': {'name': 'Toolset', 'inspectImageLink': 'https://assets.tarkov.dev/590c2e1186f77425357b6124-image.webp'}}, 
-                            {'count': 6, 'item': {'name': 'Xenomorph sealing foam', 'inspectImageLink': 'https://assets.tarkov.dev/590c346786f77423e50ed342-image.webp'}}
-                        ]
-                    }
-                ]
-            }
-        ]
-        """
+    data = requests.post(
+        "https://api.tarkov.dev/graphql",
+        headers=headers,
+        json={"query": query},
+    )
 
-def get_hideout_crafts(station):
-    all_crafts = """ all crafts for each stations all levels query (fix?) - query MyQuery {hideoutStations(gameMode: pve) { name crafts { duration requiredItems { item { name inspectImageLink} count } level rewardItems {item {name}}}imageLink}}"""
-    return all_crafts
+    if data.status_code != 200:
+        return []
+
+    response = data.json()
+
+    # Find matching station
+    station_data = next(
+        (
+            s for s in response["data"]["hideoutStations"]
+            if s["name"] == station
+        ),
+        None,
+    )
+
+    if not station_data:
+        return []
+
+    levels_out = []
+
+    for idx, level in enumerate(station_data["levels"], start=1):
+        requirements = []
+
+        for req in level["itemRequirements"]:
+            requirements.append(
+                (
+                    req["item"]["name"],
+                    req["count"],
+                    req["item"]["inspectImageLink"],
+
+                )
+            )
+
+        levels_out.append(
+            {
+                "level": idx,
+                "requirements": requirements,
+            }
+        )
+
+    return levels_out
+
+
+def get_hideout_crafts(query, station):
+    headers = {"Content-Type": "application/json"}
+    res = requests.post(
+        "https://api.tarkov.dev/graphql",
+        headers=headers,
+        json={"query": query},
+    )
+
+    if res.status_code != 200:
+        return []
+
+    data = res.json()["data"]["hideoutStations"]
+    
+    station_data = next(
+        (s for s in data if s["name"] == station),
+        None,
+    )
+
+    if not station_data or not station_data["crafts"]:
+        return []
+
+    crafts_out = []
+
+    for craft in station_data["crafts"]:
+        requirements = [
+            (
+                req["item"]["name"],
+                req["count"],
+                req["item"]["inspectImageLink"],
+            )
+            for req in craft["requiredItems"]
+        ]
+
+        outputs = [
+            (
+                out["item"]["name"],
+                out.get("count", 1),
+                out["item"]["inspectImageLink"],
+            )
+            for out in craft["rewardItems"]
+        ]
+
+        crafts_out.append(
+            {
+                "level": craft["level"],
+                "duration": craft["duration"],
+                "requirements": requirements,
+                "outputs": outputs,
+            }
+        )
+    return crafts_out
+
+if __name__ == "__main__":
+    kit_generator()
