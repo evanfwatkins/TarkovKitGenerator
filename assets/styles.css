@@ -144,6 +144,52 @@ h2 {
     justify-content: center;
 }
 
+.craft-headers {
+    display: flex;
+    align-items: baseline;
+    padding: 8px 12px;
+    background: linear-gradient(
+      180deg,
+      #2b2b2b 0%,
+      #1f1f1f 100%
+    );
+    color: #d8d8d8;
+    font-size: 17px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-left: 4px solid var(--tarkov-accent);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(0,0,0,0.8);
+    position: relative;
+    justify-content: center;
+}
+
+.tarkov-info-tip {
+  background-color: #2b2b2b;
+  border: 1px solid #4a4a4a; 
+  border-radius: 2px; 
+
+  color: #ffffff; 
+  font-family: 'Consolas', 'Courier New', monospace; 
+  font-size: 0.85em; 
+  font-weight: normal;
+  text-transform: uppercase; 
+
+  padding: 8px 12px;
+  margin-top: 15px; 
+  margin-bottom: 5px; 
+  width: 100%; 
+}
+
+.tarkov-info-tip strong {
+    color: #5eff5e; 
+    font-weight: bold;
+    background-color: #444444; 
+    padding: 2px 4px;
+    margin: 0 2px;
+}
+
 
 .header {
     display: flex;
@@ -693,16 +739,17 @@ h2 {
 .craft-card {
     background-color: var(--tarkov-panel);
     border: 1px solid var(--tarkov-border);
-    box-shadow:
-        inset 0 0 0 1px #0d0f0d,
+    box-shadow: inset 0 0 0 1px #0d0f0d,
         0 2px 6px rgba(0, 0, 0, 0.8);
-
     padding: 14px 18px;
     margin: 10px 0;
-
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .upgrade-item {
@@ -719,4 +766,82 @@ h2 {
     flex-direction: row;
     gap: 12px;
     align-items: center;
+    color: white;
+
+}
+
+.craft-arrow {
+    font-size: 18px;
+    color: white;
+}
+
+#clear {
+    background-color: #A30000; /* Darker, desaturated red */
+    color: #000000; /* White/Light color for maximum contrast (EFT often uses stark white text) */
+    
+    border: 2px solid #5C0000; /* Darker red/maroon border for depth */
+    border-radius: 0px; /* Sharp, squared-off edges */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.4); /* Subtle red glow/hazard look */
+    
+    font-family: 'Consolas', 'Courier New', monospace; /* Technical, monospaced font */
+    font-weight: bold;
+    text-transform: uppercase; /* Military/technical look */
+    
+    width: auto;
+    padding: 5px 10px; /* Increased padding for better click area */
+    height: auto;
+    cursor: pointer; /* Indicates it's clickable */
+    transition: background-color 0.1s ease; /* Smooth hover effect */
+}
+
+#clear:hover {
+    background-color: #CC0000; /* Brighter red on hover (danger highlight) */
+    border-color: #800000;
+}
+
+#clear:active {
+    background-color: #800000; /* Darker red when pressed */
+    transform: translateY(1px); /* Simple press effect */
+}
+
+/* 1. Define the Keyframes Animation */
+@keyframes flash-red {
+    0% { background-color: #343434; } /* Starts at original color */
+    20% { background-color: red; }    /* Flashes red */
+    100% { background-color: #343434; } /* Returns to original color */
+}
+
+/* 2. Original Class Declaration (with the addition of the animation property) */
+.empty-crafts {
+    width: auto;
+    padding: 2px;
+    height: auto;
+    display: flex;
+    background-color: #343434; /* Original background color */
+    word-spacing: auto;
+    color: white;
+    border: none;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    
+    /* --- ANIMATION PROPERTY --- */
+    animation: flash-red 0.5s ease-in-out 1; /* Name, duration, timing, repetition */
+}
+
+.item-img {
+    background-color: #000000ba;
+    height: 75px;
+    object-fit: contain;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    width: 175px;
+  }
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    justify-items: center;
 }

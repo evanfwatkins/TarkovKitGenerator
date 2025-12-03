@@ -14,8 +14,8 @@ layout = html.Div(
                     [
                         dcc.Dropdown(id='map-dropdown',
                             options=[
-                                {'label': 'Randomize Map: Yes', 'value': 'yes'},
-                                {'label': 'Randomize Map: No', 'value': 'no'}
+                                {'label': 'Random Map: Yes', 'value': 'yes'},
+                                {'label': 'Random Map: No', 'value': 'no'}
                         ],value='no'),
                     ], className="map-dropdown-div"
                 ),

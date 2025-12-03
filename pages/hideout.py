@@ -30,7 +30,6 @@ layout = html.Div(
                         ]
                     ],
                 ),
-
                 dcc.RadioItems(
                     id="hideout-mode",
                     options=[
@@ -41,6 +40,7 @@ layout = html.Div(
                     inline=True,
                     className="hideout-mode",
                 ),
+            html.Button("Reset", className="reset", id="clear")
             ],
             className="hideout-controls",
         ),
@@ -54,9 +54,26 @@ layout = html.Div(
     Output("hideout-container", "children"),
     Input("station-dropdown", "value"),
     Input("hideout-mode", "value"),
+    Input("clear", "n_clicks")
 )
-def render_hideout(station, mode):
-    if not station:
+
+# Define the utility function for the Tarkov-themed info block
+def tarkov_info_tip(tip_text, class_name="tarkov-info-tip"):
+    """Creates a Tarkov-themed text block for tips or info."""
+    return html.Div(
+        tip_text,
+        className=class_name
+    )
+
+def render_hideout(station, mode, n_clicks):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        return html.Div("", className="empty") 
+        
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if trigger_id == 'clear' and n_clicks:
         return html.Div("", className="empty")
     cards = []
 
@@ -113,28 +130,27 @@ def render_crafts(station):
     crafts = api.get_hideout_crafts(query,station)
 
     if not crafts:
-        return html.Div("No crafts available.", className="empty")
+        return html.Div("Select a hideout station", className="empty-crafts")
+
+    note = tarkov_info_tip("HINT: Use Ctrl + F to quickly search for an item", class_name="tarkov-info-tip craft-note")
 
     cards = []
-
     for craft in crafts:
         cards.append(
             html.Div(
                 [
                     html.Div(
-                        f"CRAFT • LVL {craft['level']} • {craft['duration']//3600}H",
-                        className="headers",
+                        f"{station} Level {craft['level']} • {craft['duration']//3600}H",
+                        className="craft-headers",
                     ),
-
                     html.Div(
                         [
                             html.Div(
                                 [
                                     html.Div(
                                         [
-                                            html.Img(src=img),
-                                            html.Div(name),
-                                            html.Div(f"x{count}"),
+                                            html.Img(src=img, className="item-img"),
+                                            html.Div(name, f' x{count}'),
                                         ],
                                         className="item-box",
                                     )
@@ -149,9 +165,8 @@ def render_crafts(station):
                                 [
                                     html.Div(
                                         [
-                                            html.Img(src=img),
-                                            html.Div(name),
-                                            html.Div(f"x{count}"),
+                                            html.Img(src=img, className="item-img"),
+                                            html.Div(name, f"x{count}"),
                                         ],
                                         className="item-box",
                                     )
@@ -167,4 +182,4 @@ def render_crafts(station):
             )
         )
 
-    return cards
+    return [note] + cards

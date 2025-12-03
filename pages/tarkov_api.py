@@ -320,6 +320,7 @@ def get_hideout_crafts(query, station):
             )
             for req in craft["requiredItems"]
         ]
+        
 
         outputs = [
             (
