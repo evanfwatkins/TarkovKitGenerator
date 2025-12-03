@@ -59,9 +59,8 @@ layout = html.Div(
 
 # Define the utility function for the Tarkov-themed info block
 def tarkov_info_tip(tip_text, class_name="tarkov-info-tip"):
-    """Creates a Tarkov-themed text block for tips or info."""
     return html.Div(
-        tip_text,
+        children=tip_text,  # Explicitly define the children
         className=class_name
     )
 
@@ -132,7 +131,7 @@ def render_crafts(station):
     if not crafts:
         return html.Div("Select a hideout station", className="empty-crafts")
 
-    note = tarkov_info_tip("HINT: Use Ctrl + F to quickly search for an item", class_name="tarkov-info-tip craft-note")
+    note = tarkov_info_tip("HINT: Use Ctrl + F to quickly search for an item", class_name=None)
 
     cards = []
     for craft in crafts:
