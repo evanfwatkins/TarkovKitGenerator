@@ -57,13 +57,6 @@ layout = html.Div(
     Input("clear", "n_clicks")
 )
 
-# Define the utility function for the Tarkov-themed info block
-def tarkov_info_tip(tip_text, class_name="tarkov-info-tip"):
-    return html.Div(
-        children=tip_text,  # Explicitly define the children
-        className=class_name
-    )
-
 def render_hideout(station, mode, n_clicks):
     ctx = dash.callback_context
 
@@ -84,7 +77,6 @@ def render_hideout(station, mode, n_clicks):
     else:
         return render_crafts(station)
 
-    
 def render_upgrades(station):
     query = """query MyQuery {hideoutStations(gameMode: pve) {name levels {itemRequirements {item {name inspectImageLink} count}}}}"""
     upgrades = api.get_hideout_upgrades(query,station)
@@ -131,8 +123,6 @@ def render_crafts(station):
     if not crafts:
         return html.Div("Select a hideout station", className="empty-crafts")
 
-    note = tarkov_info_tip("HINT: Use Ctrl + F to quickly search for an item", class_name=None)
-
     cards = []
     for craft in crafts:
         cards.append(
@@ -149,7 +139,7 @@ def render_crafts(station):
                                     html.Div(
                                         [
                                             html.Img(src=img, className="item-img"),
-                                            html.Div(name, f' x{count}'),
+                                            html.Div(f"{name} x{count}", className="item-name")
                                         ],
                                         className="item-box",
                                     )
@@ -165,7 +155,7 @@ def render_crafts(station):
                                     html.Div(
                                         [
                                             html.Img(src=img, className="item-img"),
-                                            html.Div(name, f"x{count}"),
+                                            html.Div(f"{name} x{count}", className="item-name"),
                                         ],
                                         className="item-box",
                                     )
@@ -181,4 +171,4 @@ def render_crafts(station):
             )
         )
 
-    return [note] + cards
+    return cards
