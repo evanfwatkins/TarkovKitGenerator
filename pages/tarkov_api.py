@@ -24,7 +24,7 @@ def kit_generator():
         mask = ['Mask', 'Empty', '/assets/images/empty_mask_image.png']
         rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
         rig = requester(rig_query, "Chest Rig")
-        # print(rig)
+        # print(f"rig: {rig}")
         if "plate carrier" or "armored rig" in rig[1]:
             armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
             backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
@@ -59,7 +59,8 @@ def kit_generator():
                 headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']        
                 rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
                 rig = requester(rig_query, "Chest Rig")        
-                if "plate carrier" or "armored rig" in rig[1]:
+                if 'armor' in rig[3] or 'plate carrier' in rig[1] or 'armored rig' in rig[1]:
+                    # print(f"rig with armor detected: {rig}")
                     armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
                     backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
                     backpack = requester(backpack_query, "Backpack")
@@ -70,7 +71,12 @@ def kit_generator():
                     customized_weapon = random.choice(yes_no)
                 else: 
                     armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
-                    armor = requester(armor_query, "Armor")
+                    armor_temp = requester(armor_query, "Armor")
+                    # print(f"armor after requester: {armor_temp}")
+                    if 'armor' in armor_temp[3] or 'plate carrier' in armor_temp[1] or 'armored rig' in rig[1]:
+                        armor = armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
+                    else: 
+                        armor = armor_temp
                     backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
                     backpack = requester(backpack_query, "Backpack")
                     gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
@@ -86,16 +92,31 @@ def kit_generator():
                 headset = requester(headset_query, "Headset")        
                 rig_query = """query MyQuery {items(type: rig, types: wearable) {name types inspectImageLink}}"""
                 rig = requester(rig_query, "Chest Rig")        
-                armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
-                armor = requester(armor_query, "Armor")
-                backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
-                backpack = requester(backpack_query, "Backpack")        
-                gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
-                base_gun = requester(gun_query, "Weapon")
-                gun = image_by_name(base_gun, "Weapon")
-                yes_no = ["Yes", "No"]
-                customized_weapon = random.choice(yes_no)
-                # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
+                if 'armor' in rig[3] or 'plate carrier' in rig[1] or 'armored rig' in rig[1]:
+                    armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
+                    backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
+                    backpack = requester(backpack_query, "Backpack")
+                    gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
+                    base_gun = requester(gun_query, "Weapon")
+                    gun = image_by_name(base_gun, "Weapon")
+                    yes_no = ["Yes", "No"]
+                    customized_weapon = random.choice(yes_no)
+                else: 
+                    armor_query = """query Armor {items(name: "Armor", types: armor) {name types inspectImageLink}}"""
+                    armor_temp = requester(armor_query, "Armor")
+                    # print(f"armor after requester: {armor_temp}")
+                    if 'armor' in armor_temp[3] or 'plate carrier' in armor_temp[1] or 'armored rig' in rig[1]:
+                        armor = armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
+                    else: 
+                        armor = armor_temp
+                    backpack_query = """query Gear {items(name: "Backpack") {name inspectImageLink}}"""
+                    backpack = requester(backpack_query, "Backpack")
+                    gun_query = """query Weapon {items(types: gun, type: wearable) {name inspectImageLink}}"""
+                    base_gun = requester(gun_query, "Weapon")
+                    gun = image_by_name(base_gun, "Weapon")
+                    yes_no = ["Yes", "No"]
+                    customized_weapon = random.choice(yes_no)
+                    # print(helmet, headset, mask, armor, backpack, grenades, gun, customized_weapon)
                 return helmet, mask, headset, rig, armor, backpack, grenades, gun, customized_weapon
 
 def requester(query, type):
@@ -126,12 +147,16 @@ def requester(query, type):
                 # print(f"mask random_string: {random_string}")
                 return random_string
             if type == 'Chest Rig':
-                rigs_with_type = [i for i in response['data']['items'] if 'armor' or 'rig' not in i['types']]             
+                rigs_with_type = [i for i in response['data']['items']]             
                 rigs = [list(d.values()) for d in rigs_with_type]
+                # print(f"rigslist in requester: {rigs}")
                 list_of_rigs = []
                 for i in rigs:
+                    # print(f"i before modification: {i}")
+                    specs = i[1]
                     i.remove(i[1])
                     i.insert(0, type)
+                    i.insert(3, specs)
                     list_of_rigs.append(i)                
                 final_rig = random.choice(list_of_rigs)
                 # print(f"final_rig: {final_rig}")
@@ -140,12 +165,13 @@ def requester(query, type):
                 list_of_armor = []
                 for i in response['data']['items']:
                     i = list(i.values())
+                    types = i[1]
+                    i.remove(i[1])
                     i.insert(0, type)
-                    del i[2]
-                    # print(f"i: {i}")
+                    i.insert(3, types)
                     list_of_armor.append(i)
                 armor = random.choice(list_of_armor)
-                # print(f"armor: {armor}")
+                # print(f"armor in requester: {armor}")
                 return armor
             else: 
                 list_of_items = [[type, item['name'], item['inspectImageLink']] for item in response['data']['items']]
@@ -286,7 +312,6 @@ def get_hideout_upgrades(query, station):
         )
 
     return levels_out
-
 
 def get_hideout_crafts(query, station):
     headers = {"Content-Type": "application/json"}
