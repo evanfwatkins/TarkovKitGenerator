@@ -289,13 +289,13 @@ h2 {
   margin-bottom: 10px;
   line-height: 1.5;
   color: #c7b98c;
-  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  /* transition: color 0.2s ease-in-out, transform 0.2s ease-in-out; */
 }
 
 .features-list li:hover {
   color: #f5e9b8;
-  transform: translateX(4px);
-  text-shadow: 0 0 8px rgba(194, 179, 127, 0.4);
+  /* transform: translateX(4px);
+  text-shadow: 0 0 8px rgba(194, 179, 127, 0.4); */
 }
 
 .map-title {

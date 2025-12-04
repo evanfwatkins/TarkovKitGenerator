@@ -17,7 +17,7 @@ layout = html.Div(
                     className="features-list",
                     children=[
                         html.Li("Helmets, masks, and headsets conflict. Decide what gear to wear - Work in progress"),
-                        html.Li("Armor and armored vests conflict. Decide what gear to wear - Work in progress"),
+                        html.Li("Armor and armored vests may conflict. Decide what armor to wear - Work in progress"),
                         html.Li("Gun customizations don't work one bit")
                     ],
                 ),
@@ -25,7 +25,7 @@ layout = html.Div(
         ),
         html.Div(className="upcoming-features",
             children=[
-                html.H3("Upcoming Changes (Updated: 12/02)", className="features-title"),
+                html.H3("Upcoming Changes (Updated: 12/03)", className="features-title"),
                 html.Ul(
                     className="features-list",
                     children=[
@@ -33,22 +33,16 @@ layout = html.Div(
                         html.Ul(
                             className="sub-features-list",
                             children=[
-                                html.Li("Required items for station upgrades (all levels)"),
-                                html.Li("All craft item requirements")
+                                html.Li("Fix station upgrade/craft display"),
+                                html.Li("Fix station selection style"),
+                                html.Li("Optimize station upgrade/craft response time"),
                             ]
                         ),
+                        html.Li("Seamless gear combinations"),
+                        html.Li("Optimized kit generator response time"),
                         html.Li("Weapon attachment randomizer"),
-                        html.Ul(
-                            className="sub-features-list",
-                            children=[
-                                html.Li("Simple Yes/No for suppressor, foregrip, optic, flashlight"),
-                                html.Li("Randomized (compatible) attatchments straight from the kit gerenator screen"),
-                                html.Li(f"Select a gun to customize from the Gun Customizer page"),
-                            ]
-                        ),
-                        html.Li("Optimize kit generator response time"),
                         html.Li("Fill the page with adds and viruses"),
-                        html.Li("Add required annaul subscription")
+                        html.Li("Add required annaul subscription for p2w features"),
                     ]
                 ),
             ],
