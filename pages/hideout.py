@@ -17,6 +17,7 @@ layout = html.Div(
                             
                             "Workbench",
                             "Water Collector",
+                            "Generator",
                             "Heating",
                             "Intelligence Center",
                             "Medstation",
