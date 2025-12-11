@@ -1,20 +1,8 @@
 ### TarkovKitGenerator
-## Uses open source data from Tarkov API https://github.com/the-hideout/tarkov-api
-## Github repo https://github.com/evanfwatkins/TarkovKitGenerator
-## Tarkov Database https://api.tarkov.dev/
-To start the application run 'app.py'
+## TarkovKitGenerator is a Python web app built with Dash and hosted with www.pythonanywhere.com. THis app acts like a simple toolbelt for Escape from Tarkov players. It includes tools like random loadout generators with the option of a random map generator, and crafting/upgrade information for all stations in the Hideout. This tool can help a player in game and can also provide some fun raids with the random kit generator. 
 
-To start PythonAnywhere make sure the ENV is activated
-cd ~
-python3.10 -m venv venv
-source ~/venv/bin/activate
-pip install dash
-pip install requests
-pip install requests pandas
-/home/ew45/venv
-Reload the web app ✅
-
-
-## List of fixes needed
-1. Improve the accuracy of helmet/headeset/mask and armor/vest that are blocking eachother 
-    
+## Resources
+- **Tarkov API (the-hideout):**
+  https://github.com/the-hideout/tarkov-api
+- **Tarkov.dev Database API:**
+  https://api.tarkov.dev/
