@@ -1,8 +1,11 @@
 from dash import Dash, html, dcc, page_container
 
+from data_loader import load_all_data
+
 # Instantiate Dash before any register_page() calls
 app = Dash(__name__, use_pages=True)
 server = app.server  # (optional, for deployment)
+
 
 # Shared navbar (persistent on all pages)
 navbar = html.Div(
@@ -24,6 +27,11 @@ navbar = html.Div(
         ),
     ],
 )
+
+loaded = load_all_data()
+if not loaded:
+    print("Warning: initial Tarkov data load failed. App will continue with empty cache.")
+
 
 # Main app layout
 app.layout = html.Div(
