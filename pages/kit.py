@@ -39,13 +39,9 @@ def update_boxes(n_clicks, map_choice):
         return [html.Div("", className="empty")], []
     try:
         request = api.kit_generator()
-        # comment me back in!!!!!!!!!!!!!!
         customized_weapon = request[8]
-        # customized_weapon = "Yes"
         new_request = request[:-1]
         new_request_list = list(new_request)
-        # print(f"new_request_list: {new_request_list}")
-        # If map randomization is selected
         if map_choice == 'yes':
             maps = ['Customs', 'Woods', 'Shoreline', 'Interchange', 'Labs',
                     'Reserve', 'Lighthouse', 'Streets', 'Factory', 'Labrynth', 'Ground_Zero']
@@ -69,13 +65,7 @@ def update_boxes(n_clicks, map_choice):
             gun_name = new_request_list[7][1]
             gun_image = new_request_list[7][2]
             attatchment_randomizer = api.weapon_customizer(gun_name)
-            # print(f"attatchment_randomizer: {attatchment_randomizer}")
             new_attatchments_list = list(attatchment_randomizer)
-            # print(f"new_attatchments_list: {new_attatchments_list}")
-            # for item in attatchment_randomizer:
-            #     print(f"item: {item}")
-            #     print(f"item[0]: {item[0]}")
-            #     print(f"item[1]: {item[1]}")
             weapon_div = [
                 html.Div(
                     [
@@ -88,13 +78,11 @@ def update_boxes(n_clicks, map_choice):
             ]
             
         else: 
-            # gun_name = new_request_list[7][1]
             weapon_div = html.Div(
                 [
                     html.Span("Customized Weapon: No", className="name")
                 ]
             )
-            # return weapon_div
         
         return boxes, weapon_div
 
