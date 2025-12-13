@@ -35,6 +35,7 @@ def load_items():
     }
     """
     data = post_graphql(q)
+    # print(f"q = {data}")
     return data.get("items", [])
 
 

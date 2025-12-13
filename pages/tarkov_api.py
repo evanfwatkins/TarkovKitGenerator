@@ -45,25 +45,26 @@ def kit_generator():
     (helmet, headset, mask, rig, armor, backpack, grenades, weapon, customized_weapon)
     Each element is a list like ['Helmet', name, image, ...]
     """
-    # Helmet logic: find wearable items that look like helmets (heuristic)
-    helmet = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "helmet" in i.get("name","").lower(), "Helmet")
+    
+    # Mask
+    has_mask = random.choice([True, False])
+    if not has_mask:
+        helmet = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "helmet" in i.get("name","").lower(), "Helmet")
+        print(helmet)
+        if helmet[4]:
+            headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
+        else:
+            headset = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "headset" in i.get("name","").lower(), "Headset")
+        mask = ['Mask', 'No Mask', '/assets/images/empty_mask_image.png', [], False]
+    else:
+        mask = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "mask" in i.get("name","").lower(), "Mask")
+        helmet = ['Helmet', 'Empty', '/assets/images/empty_helmet_image.png']
+        headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
 
     # Grenades
-    # fallback: any item whose types contains 'grenade'
-    grenade_quantity = random.randint(1, 4)
-    grenades = [f"Grenades x{grenade_quantity}", "Multiple", "/assets/images/grenade_image.png"]
-
-    # Mask
-    mask = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "mask" in i.get("name","").lower(), "Mask")
-
-    # Headset (if mask blocks headphones, show empty headset)
-    # Use blocksHeadphones if present on helmet/mask; otherwise allow headset
-    blocks = helmet[4] or mask[4]
-    if blocks:
-        headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
-    else:
-        headset = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "headset" in i.get("name","").lower(), "Headset")
-
+    grenade_quantity = random.randint(1, 5)
+    grenades = _sample_items_by_pred(lambda i: any("grenade" in t for t in _types_lower(i)), "Grenades: x"+str(grenade_quantity))
+    
     # Rig
     rig = _sample_items_by_pred(lambda i: "rig" in i.get("types", []) or "rig" in i.get("name","").lower(), "Chest Rig")
 
@@ -116,7 +117,6 @@ def image_by_name_equivalent(name, item_type="Weapon"):
     try to find the item by name in the cached store.
     Returns ['Weapon', name, image] style list.
     """
-    print(name)
     if not name:
         return [item_type, "Unknown", f"/assets/images/empty_{item_type.lower()}_image.png"]
     item = data_store.items_by_name.get(name.lower())
