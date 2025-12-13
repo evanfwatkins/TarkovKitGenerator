@@ -1,11 +1,14 @@
 from dash import Dash, html, dcc, page_container
 
-from data_loader import load_all_data
 
 # Instantiate Dash before any register_page() calls
 app = Dash(__name__, use_pages=True)
 server = app.server  # (optional, for deployment)
 
+
+from data_loader import preload_kit_data
+
+preload_kit_data()
 
 # Shared navbar (persistent on all pages)
 navbar = html.Div(
@@ -21,14 +24,13 @@ navbar = html.Div(
             children=[
                 dcc.Link("Home", href="/", className="nav-link"),
                 dcc.Link("Kit Generator", href="/kit", className="nav-link"),
-                dcc.Link("Kit DEV Testing", href="/kitV2", className="nav-link"),
                 dcc.Link("Hideout", href="/hideout", className="nav-link")
             ],
         ),
     ],
 )
 
-loaded = load_all_data()
+loaded = preload_kit_data()
 if not loaded:
     print("Warning: initial Tarkov data load failed. App will continue with empty cache.")
 

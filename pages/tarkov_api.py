@@ -1,201 +1,288 @@
-# pages/tarkov_api.py
-"""
-Replaces request-per-click logic with in-memory sampling from data_store.
-Function signatures kept compatible with existing page usage:
-- kit_generator()
-- weapon_customizer(gun_name)
-- get_hideout_upgrades(query, station)  # still accepts query param for compatibility
-- get_hideout_crafts(query, station)
-"""
 
+
+import requests
+from pprint import pprint
+from pages import tarkov_api as api
+import pages.tarkov_api as api
 import random
-from data_store import data_store
 import math
-
-# ---------- Helpers ----------
-
-def _get_items_df():
-    return data_store.items_df if data_store.items_df is not None else None
+from data_store import data_store
 
 
-def _sample_items_by_pred(pred, type_label):
-    """
-    pred: function(row_dict) -> bool
-    returns an item list in the same light structure your pages expect:
-      ['TypeLabel', name, inspectImageLink, ...optional fields...]
-    """
-    items = data_store.items_raw or []
-    candidates = [i for i in items if pred(i)]
-    if not candidates:
-        # fallback placeholder (keeps UI safe)
-        return [type_label, f"Empty {type_label}", f"/assets/images/empty_{type_label.lower()}_image.png"]
-    sel = random.choice(candidates)
-    name = sel.get("name", "Unknown")
-    image = sel.get("inspectImageLink") or f"/assets/images/empty_{type_label.lower()}_image.png"
-    # return at least three elements (index 0..2) as your UI uses [0]=header, [1]=name, [2]=image
-    # put types or blocksHeadphones as index 3 if needed
-    return [type_label, name, image, sel.get("types", None), sel.get("blocksHeadphones", False)]
-
-
-# ---------- Kit generator ----------
+def _pick(pool, fallback_label):
+    if not pool:
+        return [fallback_label, "Empty", f"/assets/images/empty_{fallback_label.lower()}_image.png"]
+    return random.choice(pool)
 
 def kit_generator():
-    """
-    Returns 9-tuple compatible with your existing code:
-    (helmet, headset, mask, rig, armor, backpack, grenades, weapon, customized_weapon)
-    Each element is a list like ['Helmet', name, image, ...]
-    """
-    
-    # Mask
-    has_mask = random.choice([True, False])
-    if not has_mask:
-        helmet = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "helmet" in i.get("name","").lower(), "Helmet")
-        print(helmet)
-        if helmet[4]:
-            headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
-        else:
-            headset = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "headset" in i.get("name","").lower(), "Headset")
-        mask = ['Mask', 'No Mask', '/assets/images/empty_mask_image.png', [], False]
+    wears_mask = random.choice([True, False])
+    if wears_mask:
+        helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
+        headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
+        mask = _pick(data_store.masks, "Mask")
     else:
-        mask = _sample_items_by_pred(lambda i: "wearable" in _types_lower(i) and "mask" in i.get("name","").lower(), "Mask")
-        helmet = ['Helmet', 'Empty', '/assets/images/empty_helmet_image.png']
-        headset = ['Headset', 'Empty', '/assets/images/empty_headset_image.png']
+        helmet = _pick(data_store.helmets, "Helmet")
+        if helmet[4]:  # blocksHeadphones
+            headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
+        else:
+            headset = _pick(data_store.headsets, "Headset")
+        mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
 
-    # Grenades
-    grenade_quantity = random.randint(1, 5)
-    grenades = _sample_items_by_pred(lambda i: any("grenade" in t for t in _types_lower(i)), "Grenades: x"+str(grenade_quantity))
+    rig = _pick(data_store.chest_rigs, "Chest Rig")
+    armor = _pick(data_store.armors, "Armor")
+    backpack = _pick(data_store.backpacks, "Backpack")
+
+    grenade_count = random.randint(1, 4)
+    grenades = _pick(data_store.grenades, "Grenades")
+    grenades[1] = f"{grenades[1]} x{grenade_count}"
     
-    # Rig
-    rig = _sample_items_by_pred(lambda i: "rig" in i.get("types", []) or "rig" in i.get("name","").lower(), "Chest Rig")
+    base_gun = _pick(data_store.guns, "Weapon")
+    gun = image_by_name(base_gun, "Weapon")
+    last_word = "Default"
+    if check_last_word(gun[1], last_word):
+        gun[1] = gun[1].replace(last_word, "").strip()
 
-    # Armor: prefer armor types
-    armor_candidate = _sample_items_by_pred(lambda i: any(t for t in _types_lower(i) if "armor" in t or "vest" in t or "carrier" in t), "Armor")
-    # If rig implies plate carrier, sometimes armor is empty; but keep simple:
-    armor = armor_candidate
-
-    # Backpack
-    backpack = _sample_items_by_pred(lambda i: "backpack" in i.get("name","").lower() or "backpack" in _types_lower(i), "Backpack")
-
-    # Weapon: pick any item with types containing 'gun' or 'weapon'
-    weapon = _sample_items_by_pred(lambda i: any("gun" in t or "weapon" in t for t in _types_lower(i)), "Weapon")
-    weapon = weapon
-    weapon = image_by_name(weapon, "Weapon")
-    # Customized weapon yes/no
     customized_weapon = random.choice(["Yes", "No"])
 
-    # Return same shape your UI expects
-    return helmet, headset, mask, rig, armor, backpack, grenades, weapon, customized_weapon
+    return (
+        helmet,
+        headset,
+        mask,
+        rig,
+        armor,
+        backpack,
+        grenades,
+        gun,
+        customized_weapon
+    )
 
-
-def _types_lower(item):
-    """Return types as list of lowercase strings for robust checks."""
-    types = item.get("types", [])
-    if isinstance(types, str):
-        # if it's a comma-separated string
-        return [t.strip().lower() for t in types.split(",")]
-    if isinstance(types, (list, tuple)):
-        return [str(t).lower() for t in types]
-    return []
+def requester(query, type):
+    headers = {"Content-Type": "application/json"}
+    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
+    if data.status_code == 200:
+        response = data.json()
+        if type == 'Helmet':
+            helmets_with_type = [i for i in response['data']['items'] if 'glasses' not in i['types']]             
+            helmets = [list(d.values()) for d in helmets_with_type]
+            list_of_helmets = []
+            for i in helmets:
+                i.remove(i[3])
+                i.insert(0, type)
+                list_of_helmets.append(i)
+            random_string = random.choice(list_of_helmets)
+            return random_string
+        else: 
+            if type == 'Mask':
+                masks_dict = [i for i in response['data']['items']]
+                masks = [list(m.values()) for m in masks_dict]
+                list_of_masks = []
+                for i in masks:
+                    i.insert(0, type)
+                    list_of_masks.append(i)
+                random_string = random.choice(list_of_masks)
+                return random_string
+            if type == 'Chest Rig':
+                rigs_with_type = [i for i in response['data']['items']]             
+                rigs = [list(d.values()) for d in rigs_with_type]
+                list_of_rigs = []
+                for i in rigs:
+                    specs = i[1]
+                    i.remove(i[1])
+                    i.insert(0, type)
+                    i.insert(3, specs)
+                    list_of_rigs.append(i)                
+                final_rig = random.choice(list_of_rigs)
+                return final_rig
+            if type == 'Armor':
+                list_of_armor = []
+                for i in response['data']['items']:
+                    i = list(i.values())
+                    types = i[1]
+                    i.remove(i[1])
+                    i.insert(0, type)
+                    i.insert(3, types)
+                    list_of_armor.append(i)
+                armor = random.choice(list_of_armor)
+                return armor
+            else: 
+                list_of_items = [[type, item['name'], item['inspectImageLink']] for item in response['data']['items']]
+                random_string = random.choice(list_of_items)
+                return random_string
+    
+    else:
+        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
 
 def image_by_name(body, type):
-    """
-    Fully in-memory replacement.
-    Works identically to the old image_by_name(), but pulls the item
-    from data_store.items_by_name or from a substring match.
-    """
-    if not body or len(body) < 2:
-        return [type, "Unknown", f"/assets/images/empty_{type.lower()}_image.png"]
+    list = body
+    name = list[1]
+    if type == "Weapon":
+        get_default_variant_query = """query Weapon {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
+        default_variant = default_variant_requester(get_default_variant_query)
+        default_variant.insert(0, "Weapon")
+        return default_variant
+    if type == "Helmet":
+        get_default_helmet_variant_query = """query Helmet {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
+        default_helmet_variant = default_variant_requester(get_default_helmet_variant_query)
+        default_helmet_variant.insert(0, "Helmet")
+        return default_helmet_variant  
+    else:
+        print(f"Error with: {list}")
 
-    name = body[1]
-    return image_by_name_equivalent(name, type)
+def default_variant_requester(query):
+    headers = {"Content-Type": "application/json"}
+    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
+    if data.status_code == 200:
+        response = data.json()
+        names_list = [list(m.values()) for m in response["data"]["itemsByName"]]
+        response_count = len(names_list)
 
+        if response_count > 1:
+            # Try to find a "Default" variant
+            default_item = next((i for i in names_list if "Default" in i[0]), None)
+            name_and_image = default_item if default_item else names_list[0]
+            return name_and_image
+        else:
+            name_and_image = names_list[0]
+            return name_and_image
+    else:
+        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
 
+def check_last_word(main_string, target_word):
+    words = main_string.split()
+    if not words:
+        return False
+    last_word = words[-1]
 
-def image_by_name_equivalent(name, item_type="Weapon"):
-    """
-    If you previously called image_by_name_equivalent to lookup the default variant for a weapon/helmet,
-    try to find the item by name in the cached store.
-    Returns ['Weapon', name, image] style list.
-    """
-    if not name:
-        return [item_type, "Unknown", f"/assets/images/empty_{item_type.lower()}_image.png"]
-    item = data_store.items_by_name.get(name.lower())
-    if item:
-        return [item_type, item.get("name", name), item.get("inspectImageLink") or f"/assets/images/empty_{item_type.lower()}_image.png"]
-    # fallback: best-effort search by substring
-    items = data_store.items_raw or []
-    match = next((i for i in items if name.lower() in i.get("name","").lower()), None)
-    if match:
-        return [item_type, match.get("name"), match.get("inspectImageLink")]
-    return [item_type, name, f"/assets/images/empty_{item_type.lower()}_image.png"]
+    return last_word == target_word
 
+def weapon_customizer(gun_name):   
+    # magazine_query = ["Yes", "No"]
+    # magazine  = ["Magazine", random.choice(magazine_query)]
+    # print(f"magazine: {magazine}")
 
-# ---------- Weapon customizer (kept same signature) ----------
+    suppressor_query = ["Yes", "No"]
+    suppresor = ["Suppressor", random.choice(suppressor_query)]
+    # print(f"suppresor: {suppresor}")
 
-def weapon_customizer(gun_name):
-    """
-    Return tuple of attachments:
-    (suppressor, foregrip, optic, flashlight) each is ['Label', 'Yes'|'No']
-    """
-    suppressor = ["Suppressor", random.choice(["Yes", "No"])]
-    foregrip = ["Foregrip", random.choice(["Yes", "No"])]
-    optic = ["Optic", random.choice(["Yes", "No"])]
-    flashlight = ["Flashlight", random.choice(["Yes", "No"])]
-    return suppressor, foregrip, optic, flashlight
+    foregrip_query = ["Yes", "No"]
+    foregrip = ["Foregrip", random.choice(foregrip_query)]
+    # print(f"foregrip: {foregrip}")
 
+    optic_query = ["Yes", "No"]
+    optic = ["Optic", random.choice(optic_query)]
+    # print(f"optic: {optic}")
 
-# ---------- Hideout (reads from cached hideout_raw) ----------
+    flashlight_query = ["Yes", "No"]
+    flashlight = ["Flashlight", random.choice(flashlight_query)]
+    # print(f"flashlight: {flashlight}")
+
+    # print(magazine, suppresor, foregrip, optic, flashlight)
+    return suppresor, foregrip, optic, flashlight
+
+# hideout stations - query MyQuery {hideoutStations(gameMode: pve) {name}}
+# All stations upgrades - query MyQuery {hideoutStations(gameMode: pve) {name levels {itemRequirements {item {name inspectImageLink} count}}}}
 
 def get_hideout_upgrades(query, station):
-    """
-    Returns a list of levels with requirements:
-      [ { "level": int, "requirements": [ (name, count, image), ... ] }, ... ]
-    """
-    data = data_store.hideout_raw or []
-    station_data = next((s for s in data if s.get("name") == station), None)
+    headers = {"Content-Type": "application/json"}
+    data = requests.post(
+        "https://api.tarkov.dev/graphql",
+        headers=headers,
+        json={"query": query},
+    )
+
+    if data.status_code != 200:
+        return []
+
+    response = data.json()
+
+    # Find matching station
+    station_data = next(
+        (
+            s for s in response["data"]["hideoutStations"]
+            if s["name"] == station
+        ),
+        None,
+    )
+
     if not station_data:
         return []
 
     levels_out = []
-    for lvl in station_data.get("levels", []):
+
+    for idx, level in enumerate(station_data["levels"], start=1):
         requirements = []
-        for req in lvl.get("itemRequirements", []):
-            itm = req.get("item", {})
-            requirements.append((itm.get("name"), req.get("count", 0), itm.get("inspectImageLink")))
-        levels_out.append({"level": lvl.get("level"), "requirements": requirements})
+
+        for req in level["itemRequirements"]:
+            requirements.append(
+                (
+                    req["item"]["name"],
+                    req["count"],
+                    req["item"]["inspectImageLink"],
+
+                )
+            )
+
+        levels_out.append(
+            {
+                "level": idx,
+                "requirements": requirements,
+            }
+        )
+
     return levels_out
 
-
 def get_hideout_crafts(query, station):
-    """
-    Returns list of crafts for that station:
-      [ {level, duration, requirements: [(name,count,img),...], outputs: [(name,count,img),...] }, ... ]
-    """
-    data = data_store.hideout_raw or []
-    station_data = next((s for s in data if s.get("name") == station), None)
-    if not station_data or not station_data.get("crafts"):
+    headers = {"Content-Type": "application/json"}
+    res = requests.post(
+        "https://api.tarkov.dev/graphql",
+        headers=headers,
+        json={"query": query},
+    )
+
+    if res.status_code != 200:
+        return []
+
+    data = res.json()["data"]["hideoutStations"]
+    
+    station_data = next(
+        (s for s in data if s["name"] == station),
+        None,
+    )
+
+    if not station_data or not station_data["crafts"]:
         return []
 
     crafts_out = []
-    for craft in station_data.get("crafts", []):
-        requirements = []
-        for req in craft.get("requiredItems", []):
-            it = req.get("item", {})
-            requirements.append((it.get("name"), req.get("count", 0), it.get("inspectImageLink")))
-        outputs = []
-        for out in craft.get("rewardItems", []):
-            it = out.get("item", {})
-            outputs.append((it.get("name"), out.get("count", 1), it.get("inspectImageLink")))
-        crafts_out.append({
-            "level": craft.get("level"),
-            "duration": craft.get("duration"),
-            "requirements": requirements,
-            "outputs": outputs
-        })
+
+    for craft in station_data["crafts"]:
+        requirements = [
+            (
+                req["item"]["name"],
+                req["count"],
+                req["item"]["inspectImageLink"],
+            )
+            for req in craft["requiredItems"]
+        ]
+        
+
+        outputs = [
+            (
+                out["item"]["name"],
+                out.get("count", 1),
+                out["item"]["inspectImageLink"],
+            )
+            for out in craft["rewardItems"]
+        ]
+
+        crafts_out.append(
+            {
+                "level": craft["level"],
+                "duration": craft["duration"],
+                "requirements": requirements,
+                "outputs": outputs,
+            }
+        )
     return crafts_out
 
-
-# Keep CLI behaviour for local dev
 if __name__ == "__main__":
-    # quick local test (will be empty unless data_loader loaded)
-    print("Items cached:", len(data_store.items_raw or []))
+    kit_generator()
