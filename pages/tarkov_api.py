@@ -34,7 +34,12 @@ def kit_generator():
         mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
 
     rig = _pick(data_store.chest_rigs, "Chest Rig")
-    armor = _pick(data_store.armors, "Armor")
+    
+    if "plate carrier" or "armored rig" in rig[1]:
+        armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
+    else: 
+        armor = _pick(data_store.armors,"Armor")
+        
     backpack = _pick(data_store.backpacks, "Backpack")
 
     grenade_count = random.randint(1, 4)
