@@ -16,10 +16,15 @@ def _pick(pool, fallback_label):
 
 def kit_generator():
     wears_mask = random.choice([True, False])
+    list_of_blocking_masks = ['a','b','c']
+
     if wears_mask:
         helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
-        headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         mask = _pick(data_store.masks, "Mask")
+        if  mask[1] not in list_of_blocking_masks:
+            headset = _pick(data_store.headsets, "Headset")
+        else:
+            headset
     else:
         helmet = _pick(data_store.helmets, "Helmet")
         if helmet[4]:  # blocksHeadphones
