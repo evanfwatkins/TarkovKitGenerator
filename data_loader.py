@@ -29,8 +29,6 @@ def _run_query(query, type_label):
 
 
 def preload_kit_data():
-    print("[data_loader] Preloading kit data...")
-
     data_store.helmets = _run_query(
         """query { items(name: "Helmet", types: [wearable]) {
             name inspectImageLink blocksHeadphones types
@@ -86,5 +84,3 @@ def preload_kit_data():
         }}""",
         "Weapon"
     )
-
-    print("[data_loader] Kit data loaded.")

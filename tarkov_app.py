@@ -32,7 +32,7 @@ navbar = html.Div(
 
 loaded = preload_kit_data()
 if not loaded:
-    print("Warning: initial Tarkov data load failed. App will continue with empty cache.")
+    pass
 
 
 # Main app layout
