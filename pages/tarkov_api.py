@@ -17,27 +17,34 @@ def _pick(pool, fallback_label):
 def kit_generator():
     wears_mask = random.choice([True, False])
     list_of_blocking_masks = ['a','b','c']
-
+    list_of_blocking_headsets = ["Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac V headset (OD Green)", "Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac VI headset (Coyote Brown)", "Maska-1SCh face shield (Killa Edition)"]
+    headset_temp = _pick(data_store.headsets, "Headset")
     if wears_mask:
         helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
         mask = _pick(data_store.masks, "Mask")
         if  mask[1] not in list_of_blocking_masks:
-            headset = _pick(data_store.headsets, "Headset")
-        else:
-            headset
+            if headset_temp[1] in list_of_blocking_headsets:
+                headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
+            else: 
+                headset = headset_temp
     else:
         helmet = _pick(data_store.helmets, "Helmet")
         if helmet[4]:  # blocksHeadphones
             headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         else:
-            headset = _pick(data_store.headsets, "Headset")
+            if headset_temp[1] in list_of_blocking_headsets:
+                headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
+            else: 
+                headset = headset_temp
         mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
 
-    rig = _pick(data_store.chest_rigs, "Chest Rig")
-    
-    if "plate carrier" or "armored rig" in rig[1]:
+    rig_temp = _pick(data_store.chest_rigs, "Chest Rig")
+    safe_rigs = ["UMTBS 6Sh112 Scout-Sniper chest"]
+    if "plate carrier" or "armored rig" in rig_temp[1] or rig_temp[1] not in safe_rigs:
+        rig = rig_temp
         armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
     else: 
+        rig = rig_temp
         armor = _pick(data_store.armors,"Armor")
         
     backpack = _pick(data_store.backpacks, "Backpack")

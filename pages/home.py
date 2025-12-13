@@ -9,7 +9,7 @@ layout = html.Div(
             children=[
                 html.Div(
                     [
-                        html.H3("Known Bugs (Updated: 12/10)", className="features-title"),
+                        html.H3("Known Bugs (Updated: 12/13)", className="features-title"),
                         dcc.Link("GitHub Repo", href="https://github.com/evanfwatkins/TarkovKitGenerator", className="github-link"),
                     ], className="features-title"
                 ),
