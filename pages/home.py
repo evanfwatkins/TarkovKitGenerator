@@ -25,6 +25,8 @@ layout = html.Div(
                             children=[
                                 html.Li("Improve weapon attachment selection"),
                                 html.Li("Continue imrpovements to gear combinations"),
+                                html.Li("If you get a gear comination that doesn't make sense, please send a screenshot and it will be addressed in the next patch"),
+
                             ]
                         ),
                     ]

@@ -29,7 +29,7 @@ def kit_generator():
                 headset = headset_temp
     else:
         helmet = _pick(data_store.helmets, "Helmet")
-        banned_helmets = ["ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)"]
+        banned_helmets = ["ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
         if helmet[4] or helmet[1] in banned_helmets:  # blocksHeadphones
             headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         else:
