@@ -24,14 +24,14 @@ layout = html.Div(
                             className="features-list",
                             children=[
                                 html.Li("Improve weapon attachment selection"),
-                                html.Li("Continue imrpovements to gear combinations"),
-                                html.Li("If you get a gear comination that doesn't make sense, please send a screenshot and it will be addressed in the next patch"),
+                                html.Li("Continue improvements to gear combinations"),
+                                html.Li("If you get a gear combination that conflict, please send a screenshot and it will be addressed in the next patch"),
 
                             ]
-                        ),
+                        )
                     ]
                 )
-            ],
-        ),
+            ]
+        )
     ], className="header", id="header"
 )
