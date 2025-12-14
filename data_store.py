@@ -1,13 +1,8 @@
-# data_store.py
-"""
-In-memory cache for Tarkov data loaded at app startup.
-Expose both pandas DataFrames for tabular ops and raw lists/dicts
-for nested hideout data (crafts/upgrades).
-"""
-
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-import pandas as pd
+
+"""
+In-memory data store for Tarkov data loaded during app startup
+"""
 
 @dataclass
 class DataStore:
