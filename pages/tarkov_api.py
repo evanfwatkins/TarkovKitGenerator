@@ -16,7 +16,7 @@ def _pick(pool, fallback_label):
 
 def kit_generator():
     wears_mask = random.choice([True, False])
-    list_of_blocking_masks = ['Ghoul mask']
+    list_of_blocking_masks = ["Ghoul mask", "Maska-1SCh bulletproof helmet (Killa Edition)","Death Knight mask"]
     list_of_blocking_headsets = ["Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac V headset (OD Green)", "Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac VI headset (Coyote Brown)", "Maska-1SCh face shield (Killa Edition)"]
     headset_temp = _pick(data_store.headsets, "Headset")
     if wears_mask == True and "half mask" not in headset_temp[1].lower():
@@ -25,26 +25,26 @@ def kit_generator():
         if  mask[1] not in list_of_blocking_masks:
             if headset_temp[1] in list_of_blocking_headsets:
                 headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
-            else: 
+            else:
                 headset = headset_temp
     else:
         helmet = _pick(data_store.helmets, "Helmet")
-        banned_helmets = ["ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
+        banned_helmets = ["Jack-o'-lantern tactical pumpkin helmet", "Maska-1SCh bulletproof helmet (Christmas Edition)","Diamond Age Bastion helmet armor plate", "ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
         if helmet[4] or helmet[1] in banned_helmets:  # blocksHeadphones
             headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         else:
             if headset_temp[1] in list_of_blocking_headsets:
                 headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
-            else: 
+            else:
                 headset = headset_temp
         mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
 
     rig_temp = _pick(data_store.chest_rigs, "Chest Rig")
     safe_rigs = [
         "UMTBS 6Sh112 Scout-Sniper chest",
-        "Security vest", 
-        "Scav vest", 
-        "Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)", 
+        "Security vest",
+        "Scav vest",
+        "Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)",
         "LBT-1961A Load Bearing Chest Rig (Goons Edition)",
         "NPP KlASS Bagariy plate carrier (EMR)",
         "ANA Tactical Alpha chest rig (MultiCam)",
@@ -56,16 +56,16 @@ def kit_generator():
     if "plate carrier" or "armored rig" in rig_temp[1] or rig_temp[1] not in safe_rigs:
         rig = rig_temp
         armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
-    else: 
+    else:
         rig = rig_temp
         armor = _pick(data_store.armors,"Armor")
-        
+
     backpack = _pick(data_store.backpacks, "Backpack")
 
     grenade_count = random.randint(1, 4)
     grenades = _pick(data_store.grenades, "Grenades")
     grenades[1] = f"{grenades[1]} x{grenade_count}"
-    
+
     base_gun = _pick(data_store.guns, "Weapon")
     gun = image_by_name(base_gun, "Weapon")
     last_word = "Default"
@@ -92,7 +92,7 @@ def requester(query, type):
     if data.status_code == 200:
         response = data.json()
         if type == 'Helmet':
-            helmets_with_type = [i for i in response['data']['items'] if 'glasses' not in i['types']]             
+            helmets_with_type = [i for i in response['data']['items'] if 'glasses' not in i['types']]
             helmets = [list(d.values()) for d in helmets_with_type]
             list_of_helmets = []
             for i in helmets:
@@ -101,7 +101,7 @@ def requester(query, type):
                 list_of_helmets.append(i)
             random_string = random.choice(list_of_helmets)
             return random_string
-        else: 
+        else:
             if type == 'Mask':
                 masks_dict = [i for i in response['data']['items']]
                 masks = [list(m.values()) for m in masks_dict]
@@ -112,7 +112,7 @@ def requester(query, type):
                 random_string = random.choice(list_of_masks)
                 return random_string
             if type == 'Chest Rig':
-                rigs_with_type = [i for i in response['data']['items']]             
+                rigs_with_type = [i for i in response['data']['items']]
                 rigs = [list(d.values()) for d in rigs_with_type]
                 list_of_rigs = []
                 for i in rigs:
@@ -120,7 +120,7 @@ def requester(query, type):
                     i.remove(i[1])
                     i.insert(0, type)
                     i.insert(3, specs)
-                    list_of_rigs.append(i)                
+                    list_of_rigs.append(i)
                 final_rig = random.choice(list_of_rigs)
                 return final_rig
             if type == 'Armor':
@@ -134,11 +134,11 @@ def requester(query, type):
                     list_of_armor.append(i)
                 armor = random.choice(list_of_armor)
                 return armor
-            else: 
+            else:
                 list_of_items = [[type, item['name'], item['inspectImageLink']] for item in response['data']['items']]
                 random_string = random.choice(list_of_items)
                 return random_string
-    
+
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
 
@@ -154,7 +154,7 @@ def image_by_name(body, type):
         get_default_helmet_variant_query = """query Helmet {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
         default_helmet_variant = default_variant_requester(get_default_helmet_variant_query)
         default_helmet_variant.insert(0, "Helmet")
-        return default_helmet_variant  
+        return default_helmet_variant
     else:
         print(f"Error with: {list}")
 
@@ -185,7 +185,7 @@ def check_last_word(main_string, target_word):
 
     return last_word == target_word
 
-def weapon_customizer(gun_name):   
+def weapon_customizer(gun_name):
     # magazine_query = ["Yes", "No"]
     # magazine  = ["Magazine", random.choice(magazine_query)]
     # print(f"magazine: {magazine}")
@@ -273,7 +273,7 @@ def get_hideout_crafts(query, station):
         return []
 
     data = res.json()["data"]["hideoutStations"]
-    
+
     station_data = next(
         (s for s in data if s["name"] == station),
         None,
@@ -293,7 +293,7 @@ def get_hideout_crafts(query, station):
             )
             for req in craft["requiredItems"]
         ]
-        
+
 
         outputs = [
             (
