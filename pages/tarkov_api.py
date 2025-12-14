@@ -16,10 +16,10 @@ def _pick(pool, fallback_label):
 
 def kit_generator():
     wears_mask = random.choice([True, False])
-    list_of_blocking_masks = ['a','b','c']
+    list_of_blocking_masks = ['Ghoul mask']
     list_of_blocking_headsets = ["Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac V headset (OD Green)", "Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac VI headset (Coyote Brown)", "Maska-1SCh face shield (Killa Edition)"]
     headset_temp = _pick(data_store.headsets, "Headset")
-    if wears_mask:
+    if wears_mask == True and "half mask" not in headset_temp[1].lower():
         helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
         mask = _pick(data_store.masks, "Mask")
         if  mask[1] not in list_of_blocking_masks:
@@ -29,7 +29,8 @@ def kit_generator():
                 headset = headset_temp
     else:
         helmet = _pick(data_store.helmets, "Helmet")
-        if helmet[4]:  # blocksHeadphones
+        banned_helmets = ["ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)"]
+        if helmet[4] or helmet[1] in banned_helmets:  # blocksHeadphones
             headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         else:
             if headset_temp[1] in list_of_blocking_headsets:
@@ -39,7 +40,19 @@ def kit_generator():
         mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
 
     rig_temp = _pick(data_store.chest_rigs, "Chest Rig")
-    safe_rigs = ["UMTBS 6Sh112 Scout-Sniper chest"]
+    safe_rigs = [
+        "UMTBS 6Sh112 Scout-Sniper chest",
+        "Security vest", 
+        "Scav vest", 
+        "Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)", 
+        "LBT-1961A Load Bearing Chest Rig (Goons Edition)",
+        "NPP KlASS Bagariy plate carrier (EMR)",
+        "ANA Tactical Alpha chest rig (MultiCam)",
+        "BlackHawk! Commando chest harness (Black)",
+        "WARTECH MK3 TV-104 chest rig (MultiCam)",
+        "Azimut SS Zhuk chest harness (Black)",
+        "Splav Tarzan M22 chest rig (Smog)"
+    ]
     if "plate carrier" or "armored rig" in rig_temp[1] or rig_temp[1] not in safe_rigs:
         rig = rig_temp
         armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']

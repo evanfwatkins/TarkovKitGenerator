@@ -279,6 +279,17 @@ h2 {
   font-size: 20px;
   text-shadow: 0 0 6px rgba(194, 179, 127, 0.4);
 }
+.version-title {
+    text-align: center;
+    color: #f5e9b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* border-bottom: 1px solid #3b3b3b; */
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    text-shadow: 0 0 6px rgba(194, 179, 127, 0.4);
+}
 
 .features-list {
   list-style-type: disc;
@@ -560,6 +571,7 @@ h2 {
     display: grid;
     background-color: #726c55;
     column-fill: inherit;
+    width: -webkit-fill-available;
 }
 
 .img{
