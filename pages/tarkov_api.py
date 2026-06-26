@@ -22,15 +22,19 @@ def kit_generator():
     if wears_mask == True and "half mask" not in headset_temp[1].lower():
         helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
         mask = _pick(data_store.masks, "Mask")
-        if  mask[1] not in list_of_blocking_masks:
+        if  mask[1] not in list_of_blocking_masks or "face shield" in mask[1].lower():
             if headset_temp[1] in list_of_blocking_headsets:
                 headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
             else:
                 headset = headset_temp
     else:
         helmet = _pick(data_store.helmets, "Helmet")
-        banned_helmets = ["Jack-o'-lantern tactical pumpkin helmet", "Maska-1SCh bulletproof helmet (Christmas Edition)","Diamond Age Bastion helmet armor plate", "ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
-        if helmet[4] or helmet[1] in banned_helmets:  # blocksHeadphones
+        
+        
+        
+        banned_helmets = ["face shield", "Jack-o'-lantern tactical pumpkin helmet", "Maska-1SCh bulletproof helmet (Christmas Edition)","Diamond Age Bastion helmet armor plate", "ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
+        
+        if (helmet[4] or helmet[1] in banned_helmets) or ("face shield" in helmet[1] or helmet[4]):  # blocksHeadphones
             headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
         else:
             if headset_temp[1] in list_of_blocking_headsets:
@@ -72,8 +76,8 @@ def kit_generator():
     if check_last_word(gun[1], last_word):
         gun[1] = gun[1].replace(last_word, "").strip()
 
-    customized_weapon = random.choice(["Yes", "No"])
-
+    customized_weapon = random.choices(["Yes", "No"], weights=[80, 20], k=1)[0]
+    
     return (
         helmet,
         headset,
@@ -190,20 +194,25 @@ def weapon_customizer(gun_name):
     # magazine  = ["Magazine", random.choice(magazine_query)]
     # print(f"magazine: {magazine}")
 
+    
     suppressor_query = ["Yes", "No"]
-    suppresor = ["Suppressor", random.choice(suppressor_query)]
+    suppresor = ["Suppressor", random.choices(suppressor_query, weights=[60, 40], k=1)[0]]
     # print(f"suppresor: {suppresor}")
 
     foregrip_query = ["Yes", "No"]
-    foregrip = ["Foregrip", random.choice(foregrip_query)]
-    # print(f"foregrip: {foregrip}")
 
+    if "pistol" or "mosin" in gun_name.lower():
+        foregrip = ["Foregrip", "No"]
+    else:
+        foregrip = ["Foregrip", random.choices(foregrip_query, weights=[60, 40], k=1)[0]]
+    # print(f"foregrip: {foregrip}")
+    
     optic_query = ["Yes", "No"]
-    optic = ["Optic", random.choice(optic_query)]
+    optic = ["Optic", random.choices(optic_query, weights=[60, 40], k=1)[0]]
     # print(f"optic: {optic}")
 
     flashlight_query = ["Yes", "No"]
-    flashlight = ["Flashlight", random.choice(flashlight_query)]
+    flashlight = ["Flashlight", random.choices(flashlight_query, weights=[60, 40], k=1)[0]]
     # print(f"flashlight: {flashlight}")
 
     # print(magazine, suppresor, foregrip, optic, flashlight)
