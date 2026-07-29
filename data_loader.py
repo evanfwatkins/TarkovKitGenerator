@@ -6,13 +6,16 @@ API_URL = "https://api.tarkov.dev/graphql"
 HEADERS = {"Content-Type": "application/json"}
 
 def _run_query(query, type_label):
-    r = requests.post(API_URL, headers=HEADERS, json={"query": query})
-    r.raise_for_status()
+    try:
+        r = requests.post(API_URL, headers=HEADERS, json={"query": query})
+    except:
+        print("Error occurred while fetching data")
+        r.raise_for_status()
     counter = 0
     counter += 1
+    print(r)
 
     items = r.json()["data"]["items"]
-
     out = []
     for item in items:
         out.append([
