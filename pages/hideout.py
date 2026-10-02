@@ -5,57 +5,13 @@ from pages import tarkov_api as api
 register_page(__name__, path="/hideout", name="Hideout")
 
 layout = html.Div(
-    [
-        html.Div(
-            [
-                dcc.Dropdown(
-                    id="station-dropdown",
-                    placeholder="Select Station",
-                    options=[
-                        {"label": s, "value": s}
-                        for s in [
-                            
-                            "Workbench",
-                            "Water Collector",
-                            "Generator",
-                            "Heating",
-                            "Intelligence Center",
-                            "Medstation",
-                            "Lavatory",
-                            "Nutrition Unit",
-                            "Security",
-                            "Rest Space",
-                            "Shooting Range",
-                            "Bitcoin Farm",
-                            "Vents"
-                        ]
-                    ],
-                ),
-                dcc.RadioItems(
-                    id="hideout-mode",
-                    options=[
-                        {"label": "Upgrades", "value": "upgrade"},
-                        {"label": "Crafts", "value": "craft"},
-                    ],
-                    value="upgrade",
-                    inline=True,
-                    className="hideout-mode",
-                ),
-            html.Button("Reset", className="reset", id="clear")
-            ],
-            className="hideout-controls",
-        ),
-
-        html.Div(id="hideout-container", className="hideout-container"),
-    ],
-    className="pageLayout",
-)
-
-@dash.callback(
-    Output("hideout-container", "children"),
-    Input("station-dropdown", "value"),
-    Input("hideout-mode", "value"),
-    Input("clear", "n_clicks")
+    html.Div(
+        [
+            html.H2("Hideout temporarily unavailable"),
+            html.P("Hideout data will return after the kit generator migration is complete."),
+        ],
+        className="pageLayout",
+    )
 )
 
 def render_hideout(station, mode, n_clicks):

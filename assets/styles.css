@@ -41,6 +41,67 @@ h2 {
     transform: scale(1.05);
 }
 
+.nav-link-disabled {
+    color: #777;
+    cursor: not-allowed;
+}
+
+.nav-link-disabled:hover {
+    color: #777;
+    transform: none;
+}
+
+.debug-terminal {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 1000;
+    width: min(480px, calc(100vw - 24px));
+    color: #d6d6d6;
+    background: #111;
+    border: 1px solid #62604e;
+    border-radius: 5px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+    font-family: "Roboto Mono", monospace;
+}
+
+.debug-terminal summary {
+    padding: 8px 12px;
+    color: #f5b042;
+    cursor: pointer;
+}
+
+.terminal-clear-button {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    padding: 3px 8px;
+    color: #d6d6d6;
+    background: #292929;
+    border: 1px solid #62604e;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.terminal-clear-button:hover {
+    color: #f5b042;
+    border-color: #c2b37f;
+}
+
+.debug-terminal[open] {
+    max-height: 45vh;
+}
+
+.debug-terminal pre {
+    max-height: calc(45vh - 40px);
+    margin: 0;
+    padding: 8px 12px;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+
 .navbar {
      display: inline-block;
     padding: 10px 24px;

@@ -1,193 +1,64 @@
 
 
-import requests
-from pprint import pprint
-from pages import tarkov_api as api
-import pages.tarkov_api as api
 import random
-import math
+import requests
 from data_store import data_store
 
 
-def _pick(pool, fallback_label):
+EMPTY_IMAGES = {
+    "Helmet": "/assets/images/empty_helmet_image.png",
+    "Headset": "/assets/images/empty_headset_image.png",
+    "Mask": "/assets/images/empty_mask_image.png",
+    "Armor": "/assets/images/empty_armor_image.png",
+}
+
+
+def _select_item(pool, slot):
     if not pool:
-        return [fallback_label, "Empty", f"/assets/images/empty_{fallback_label.lower()}_image.png"]
-    return random.choice(pool)
+        return {
+            "slot": slot,
+            "name": "Unavailable",
+            "image": EMPTY_IMAGES.get(slot),
+            "types": [],
+            "blocksHeadphones": False,
+        }
+
+    item = random.choice(pool)
+    return {
+        "slot": slot,
+        "name": item["name"],
+        "image": item.get("inspectImageLink") or EMPTY_IMAGES[slot],
+        "types": item.get("types", []),
+        "blocksHeadphones": bool(item.get("blocksHeadphones", False)),
+    }
+
 
 def kit_generator():
     wears_mask = random.choice([True, False])
-    list_of_blocking_masks = ["Ghoul mask", "Maska-1SCh bulletproof helmet (Killa Edition)","Death Knight mask"]
-    list_of_blocking_headsets = ["Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac V headset (OD Green)", "Ops-Core FAST RAC Headset", "TW EXFIL Peltor ComTac VI headset (Coyote Brown)", "Maska-1SCh face shield (Killa Edition)"]
-    headset_temp = _pick(data_store.headsets, "Headset")
-    if wears_mask == True and "half mask" not in headset_temp[1].lower():
-        helmet = ["Helmet", "Empty", "/assets/images/empty_helmet_image.png"]
-        mask = _pick(data_store.masks, "Mask")
-        if  mask[1] not in list_of_blocking_masks or "face shield" in mask[1].lower():
-            if headset_temp[1] in list_of_blocking_headsets:
-                headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
-            else:
-                headset = headset_temp
+    helmet = _select_item(data_store.helmets, "Helmet")
+    mask = _select_item(data_store.masks, "Mask")
+    if wears_mask:
+        helmet = _select_item([], "Helmet")
     else:
-        helmet = _pick(data_store.helmets, "Helmet")
-        
-        
-        
-        banned_helmets = ["face shield", "Jack-o'-lantern tactical pumpkin helmet", "Maska-1SCh bulletproof helmet (Christmas Edition)","Diamond Age Bastion helmet armor plate", "ShPM Firefighter helmet", "PSh-97 DJETA riot helmet", "ZSh-1-2M helmet (Black cover)","Altyn helmet face shield", "Kolpak-1S riot helmet", "BNTI LShZ-2DTM helmet (Black)", "SSSh-94 SFERA-S helmet"]
-        
-        if (helmet[4] or helmet[1] in banned_helmets) or ("face shield" in helmet[1] or helmet[4]):  # blocksHeadphones
-            headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
-        else:
-            if headset_temp[1] in list_of_blocking_headsets:
-                headset = ["Headset", "Empty", "/assets/images/empty_headset_image.png"]
-            else:
-                headset = headset_temp
-        mask = ["Mask", "Empty", "/assets/images/empty_mask_image.png"]
+        mask = _select_item([], "Mask")
 
-    rig_temp = _pick(data_store.chest_rigs, "Chest Rig")
-    safe_rigs = [
-        "UMTBS 6Sh112 Scout-Sniper chest",
-        "Security vest",
-        "Scav vest",
-        "Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)",
-        "LBT-1961A Load Bearing Chest Rig (Goons Edition)",
-        "NPP KlASS Bagariy plate carrier (EMR)",
-        "ANA Tactical Alpha chest rig (MultiCam)",
-        "BlackHawk! Commando chest harness (Black)",
-        "WARTECH MK3 TV-104 chest rig (MultiCam)",
-        "Azimut SS Zhuk chest harness (Black)",
-        "Splav Tarzan M22 chest rig (Smog)"
-    ]
-    if "plate carrier" or "armored rig" in rig_temp[1] or rig_temp[1] not in safe_rigs:
-        rig = rig_temp
-        armor = ['Armor', 'Empty', '/assets/images/empty_armor_image.png']
-    else:
-        rig = rig_temp
-        armor = _pick(data_store.armors,"Armor")
+    headset = _select_item(data_store.headsets, "Headset")
+    if helmet["blocksHeadphones"] or (wears_mask and headset["blocksHeadphones"]):
+        headset = _select_item([], "Headset")
 
-    backpack = _pick(data_store.backpacks, "Backpack")
-
-    grenade_count = random.randint(1, 4)
-    grenades = _pick(data_store.grenades, "Grenades")
-    grenades[1] = f"{grenades[1]} x{grenade_count}"
-
-    base_gun = _pick(data_store.guns, "Weapon")
-    gun = image_by_name(base_gun, "Weapon")
-    last_word = "Default"
-    if check_last_word(gun[1], last_word):
-        gun[1] = gun[1].replace(last_word, "").strip()
+    rig = _select_item(data_store.chest_rigs, "Chest Rig")
+    armor = (
+        _select_item([], "Armor")
+        if "armor" in rig["types"]
+        else _select_item(data_store.armors, "Armor")
+    )
+    backpack = _select_item(data_store.backpacks, "Backpack")
+    grenades = _select_item(data_store.grenades, "Grenades")
+    grenades["name"] = f"{grenades['name']} x{random.randint(1, 4)}"
+    gun = _select_item(data_store.guns, "Weapon")
 
     customized_weapon = random.choices(["Yes", "No"], weights=[80, 20], k=1)[0]
-    
-    return (
-        helmet,
-        headset,
-        mask,
-        rig,
-        armor,
-        backpack,
-        grenades,
-        gun,
-        customized_weapon
-    )
-
-def requester(query, type):
-    headers = {"Content-Type": "application/json"}
-    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
-    if data.status_code == 200:
-        response = data.json()
-        if type == 'Helmet':
-            helmets_with_type = [i for i in response['data']['items'] if 'glasses' not in i['types']]
-            helmets = [list(d.values()) for d in helmets_with_type]
-            list_of_helmets = []
-            for i in helmets:
-                i.remove(i[3])
-                i.insert(0, type)
-                list_of_helmets.append(i)
-            random_string = random.choice(list_of_helmets)
-            return random_string
-        else:
-            if type == 'Mask':
-                masks_dict = [i for i in response['data']['items']]
-                masks = [list(m.values()) for m in masks_dict]
-                list_of_masks = []
-                for i in masks:
-                    i.insert(0, type)
-                    list_of_masks.append(i)
-                random_string = random.choice(list_of_masks)
-                return random_string
-            if type == 'Chest Rig':
-                rigs_with_type = [i for i in response['data']['items']]
-                rigs = [list(d.values()) for d in rigs_with_type]
-                list_of_rigs = []
-                for i in rigs:
-                    specs = i[1]
-                    i.remove(i[1])
-                    i.insert(0, type)
-                    i.insert(3, specs)
-                    list_of_rigs.append(i)
-                final_rig = random.choice(list_of_rigs)
-                return final_rig
-            if type == 'Armor':
-                list_of_armor = []
-                for i in response['data']['items']:
-                    i = list(i.values())
-                    types = i[1]
-                    i.remove(i[1])
-                    i.insert(0, type)
-                    i.insert(3, types)
-                    list_of_armor.append(i)
-                armor = random.choice(list_of_armor)
-                return armor
-            else:
-                list_of_items = [[type, item['name'], item['inspectImageLink']] for item in response['data']['items']]
-                random_string = random.choice(list_of_items)
-                return random_string
-
-    else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
-
-def image_by_name(body, type):
-    list = body
-    name = list[1]
-    if type == "Weapon":
-        get_default_variant_query = """query Weapon {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
-        default_variant = default_variant_requester(get_default_variant_query)
-        default_variant.insert(0, "Weapon")
-        return default_variant
-    if type == "Helmet":
-        get_default_helmet_variant_query = """query Helmet {itemsByName(name: """ + f'"{name}"' + """) {name inspectImageLink}}"""
-        default_helmet_variant = default_variant_requester(get_default_helmet_variant_query)
-        default_helmet_variant.insert(0, "Helmet")
-        return default_helmet_variant
-    else:
-        print(f"Error with: {list}")
-
-def default_variant_requester(query):
-    headers = {"Content-Type": "application/json"}
-    data = requests.post('https://api.tarkov.dev/graphql', headers=headers, json={'query': query})
-    if data.status_code == 200:
-        response = data.json()
-        names_list = [list(m.values()) for m in response["data"]["itemsByName"]]
-        response_count = len(names_list)
-
-        if response_count > 1:
-            # Try to find a "Default" variant
-            default_item = next((i for i in names_list if "Default" in i[0]), None)
-            name_and_image = default_item if default_item else names_list[0]
-            return name_and_image
-        else:
-            name_and_image = names_list[0]
-            return name_and_image
-    else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(data.status_code, query))
-
-def check_last_word(main_string, target_word):
-    words = main_string.split()
-    if not words:
-        return False
-    last_word = words[-1]
-
-    return last_word == target_word
+    return [helmet, headset, mask, rig, armor, backpack, grenades, gun], customized_weapon
 
 def weapon_customizer(gun_name):
     # magazine_query = ["Yes", "No"]
@@ -201,7 +72,7 @@ def weapon_customizer(gun_name):
 
     foregrip_query = ["Yes", "No"]
 
-    if "pistol" or "mosin" in gun_name.lower():
+    if "pistol" in gun_name.lower() or "mosin" in gun_name.lower():
         foregrip = ["Foregrip", "No"]
     else:
         foregrip = ["Foregrip", random.choices(foregrip_query, weights=[60, 40], k=1)[0]]

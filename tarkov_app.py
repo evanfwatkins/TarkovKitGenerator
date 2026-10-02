@@ -24,16 +24,11 @@ navbar = html.Div(
             children=[
                 dcc.Link("Home", href="/", className="nav-link"),
                 dcc.Link("Kit Generator", href="/kit", className="nav-link"),
-                dcc.Link("Hideout", href="/hideout", className="nav-link")
+                html.Span("Hideout (Unavailable)", className="nav-link nav-link-disabled")
             ],
         ),
     ],
 )
-
-loaded = preload_kit_data()
-if not loaded:
-    pass
-
 
 # Main app layout
 app.layout = html.Div(
@@ -45,4 +40,4 @@ app.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
