@@ -10,8 +10,6 @@ From the project directory, run:
 python tarkov_app.py
 ```
 
-Then open the local URL printed in the terminal (by default, <http://127.0.0.1:8050>).
-
 ## Data source migration
 
 The app is moving from the unavailable Tarkov.dev GraphQL endpoint to the public JSON API:
