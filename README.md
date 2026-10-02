@@ -10,8 +10,6 @@ From the project directory, run:
 python tarkov_app.py
 ```
 
-Then open the local URL printed in the terminal (by default, <http://127.0.0.1:8050>).
-
 ## Data source migration
 
 The kit generator uses the Tarkov.dev public JSON API locally and a bundled snapshot on PythonAnywhere, where outbound API access is unavailable:
