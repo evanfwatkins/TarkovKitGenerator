@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -11,6 +12,7 @@ from data_store import data_store
 
 API_URL = "https://json.tarkov.dev/pve/items"
 CACHE_PATH = Path.home() / ".cache" / "tarkov-kit-generator" / "pve-items-v1.json"
+PROJECT_DATA_PATH = Path(__file__).resolve().parent / "data" / "pve-items.json"
 CACHE_MAX_AGE = timedelta(hours=24)
 HEADERS = {"Accept": "application/json"}
 logger = logging.getLogger(__name__)
@@ -109,8 +111,64 @@ def _write_cache(items, fetched_at):
         logger.warning("Unable to save Tarkov item cache: %s", error)
 
 
+def _write_project_data(items, fetched_at):
+    try:
+        PROJECT_DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+        temporary_path = PROJECT_DATA_PATH.with_suffix(".tmp")
+        temporary_path.write_text(
+            json.dumps(
+                {"fetchedAt": fetched_at.isoformat(), "source": API_URL, "items": items},
+                separators=(",", ":"),
+            ),
+            encoding="utf-8",
+        )
+        temporary_path.replace(PROJECT_DATA_PATH)
+    except OSError as error:
+        logger.warning("Unable to update the project Tarkov data snapshot: %s", error)
+
+
+def _read_project_snapshot():
+    payload = json.loads(PROJECT_DATA_PATH.read_text(encoding="utf-8"))
+    items = payload.get("items") if isinstance(payload, dict) else None
+    if not isinstance(items, list) or not all(isinstance(item, dict) for item in items):
+        raise ValueError(f"Invalid Tarkov data snapshot: {PROJECT_DATA_PATH}")
+    try:
+        fetched_at = datetime.fromisoformat(payload["fetchedAt"])
+    except (KeyError, TypeError, ValueError):
+        fetched_at = None
+    if fetched_at is not None and fetched_at.tzinfo is None:
+        fetched_at = fetched_at.replace(tzinfo=timezone.utc)
+    return items, fetched_at
+
+
+def _read_project_data():
+    items, _ = _read_project_snapshot()
+    return items
+
+
 def _load_items():
+    data_source = os.environ.get("TARKOV_DATA_SOURCE", "api").strip().lower()
+    if data_source == "bundled":
+        items = _read_project_data()
+        logger.info("Loaded %s Tarkov items from the project snapshot", len(items))
+        return items
+    if data_source != "api":
+        raise ValueError("TARKOV_DATA_SOURCE must be either 'api' or 'bundled'")
+
     cached_items, cached_at = _read_cache()
+    try:
+        project_items, project_at = _read_project_snapshot()
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        logger.warning("Unable to read project Tarkov data snapshot: %s", error)
+        project_items, project_at = None, None
+
+    if (
+        project_items is not None
+        and project_at is not None
+        and (cached_at is None or project_at > cached_at)
+    ):
+        cached_items, cached_at = project_items, project_at
+
     now = datetime.now(timezone.utc)
     if cached_items is not None and cached_at is not None and now - cached_at < CACHE_MAX_AGE:
         logger.info("Loaded Tarkov items from local cache")
@@ -132,6 +190,7 @@ def _load_items():
         return []
 
     _write_cache(items, now)
+    _write_project_data(items, now)
     logger.info("Loaded %s Tarkov items from JSON API", len(items))
     return items
 

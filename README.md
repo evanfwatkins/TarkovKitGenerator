@@ -14,12 +14,23 @@ Then open the local URL printed in the terminal (by default, <http://127.0.0.1:8
 
 ## Data source migration
 
-The app is moving from the unavailable Tarkov.dev GraphQL endpoint to the public JSON API:
+The kit generator uses the Tarkov.dev public JSON API locally and a bundled snapshot on PythonAnywhere, where outbound API access is unavailable:
 
 - Item data: <https://json.tarkov.dev/pve/items>
 - Endpoint list and supported datasets: <https://json.tarkov.dev/endpoints>
 
-The kit generator loads item data once into an in-memory data store and reuses it for each generated kit. A compact local cache under the user's home directory is refreshed every 24 hours and used as a fallback if the API is unavailable. Item `types`, `inspectImageLink`, `blocksHeadphones`, and `normalizedName` fields drive item selection and compatibility. The JSON API currently returns placeholder `name` values for some records, so the app uses the item Wiki link as a readable-name fallback.
+By default, local runs load item data from the JSON API. On a successful API refresh, the compact generator dataset is saved to `data/pve-items.json` in the project and to a 24-hour cache under the user's home directory. The project snapshot can then be deployed to PythonAnywhere with the application. If a local API refresh fails, the loader uses the last cached dataset or the project snapshot.
+
+Set `TARKOV_DATA_SOURCE=bundled` in the PythonAnywhere WSGI file before importing `tarkov_app` to make the hosted app load only the bundled file and never attempt outbound requests:
+
+```python
+import os
+os.environ["TARKOV_DATA_SOURCE"] = "bundled"
+
+from tarkov_app import server as application
+```
+
+For local API access, omit the setting or set `TARKOV_DATA_SOURCE=api`. The kit generator loads data once into an in-memory store and reuses it for each generated kit. Item `types`, `inspectImageLink`, `blocksHeadphones`, and `normalizedName` fields drive item selection and compatibility. When the JSON API returns a placeholder `name`, the app uses the item Wiki link as a readable-name fallback.
 
 ### Migration track
 
