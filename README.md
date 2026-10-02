@@ -1,6 +1,6 @@
 # TarkovKitGenerator
 
-TarkovKitGenerator is a Python web app built with Dash and hosted with PythonAnywhere. It provides random loadout generation, map selection, and Hideout information.
+TarkovKitGenerator is a Python web app built with Dash and hosted with PythonAnywhere. This app acts like a simple toolbelt for Escape from Tarkov players. It provides random loadout generation with optional map selection and is intended to include crafting and upgrade information for Hideout stations. Hideout is temporarily unavailable during this migration.
 
 ## Run the application
 
